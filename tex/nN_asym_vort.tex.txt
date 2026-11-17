@@ -1,0 +1,1004 @@
+%% ============================================================================
+%%  The N-Nanowire Qubit with Vortices:
+%%  Asymmetric Wire Positions and the Likharev Current-Phase Relation
+%%  Author: Shashank Satish
+%%
+%%  Compile with pdfLaTeX (Overleaf default). No bibliography is needed.
+%%
+%%  NOTE ON MACROS: a few long sums (the ones that appear many times) are
+%%  stored as macros in the preamble so that the source stays readable.
+%%  Every macro simply typesets the full explicit sum -- the PDF never uses
+%%  shorthand symbols for them.
+%% ============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!50!black,bookmarks=false]{hyperref}
+
+\numberwithin{equation}{section}
+\allowdisplaybreaks[1]
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+% ---------------------------------------------------------------------------
+%  Boxes
+% ---------------------------------------------------------------------------
+\newtcolorbox{resbox}{enhanced,breakable,colback=white,colframe=black,
+  boxrule=0.7pt,arc=0pt,left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{paritybox}[1]{enhanced,breakable,colback=white,
+  colframe=black,boxrule=0.7pt,arc=0pt,fonttitle=\bfseries,
+  colbacktitle=white,coltitle=black,titlerule=0.4pt,
+  title={Parity check #1},left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{notebox}[1]{enhanced,breakable,colback=gray!7,colframe=gray!60,
+  boxrule=0.5pt,arc=2pt,fonttitle=\bfseries,title={#1},left=6pt,right=6pt}
+
+% ---------------------------------------------------------------------------
+%  Explicit sums used again and again (typesetting macros only; the PDF
+%  always shows the full sum, never a shorthand symbol)
+% ---------------------------------------------------------------------------
+%  Dummy-index convention:  i  = wire label (free label in phi_i)
+%                           k  = sum over wire positions
+%                           p  = weighted vorticity sum  (N-p) n_p
+%                           j,l,q = partial sums of vorticities
+\newcommand{\Xs}{\sum_{k=1}^{N}x_k}                                  % sum of positions
+\newcommand{\Vs}{\sum_{p=1}^{N-1}(N-p)\,n_p}                         % weighted vorticity sum
+\newcommand{\Ps}{\sum_{j=1}^{i-1}n_j}                                % partial sum up to wire i
+\newcommand{\Mx}{\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i}             % sum_j n_j sum_{i>j} x_i
+\newcommand{\Mxx}{\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i^{2}}        % sum_j n_j sum_{i>j} x_i^2
+\newcommand{\MsA}{\sum_{j=1}^{N-1}n_j^{2}\sum_{i=j+1}^{N}x_i}
+\newcommand{\MsB}{2\sum_{j=1}^{N-2}\sum_{l=j+1}^{N-1}n_jn_l\sum_{i=l+1}^{N}x_i}
+\newcommand{\SqA}{\sum_{j=1}^{N-1}(N-j)\,n_j^{2}}
+\newcommand{\SqB}{2\sum_{j=1}^{N-2}\sum_{l=j+1}^{N-1}(N-l)\,n_jn_l}
+\newcommand{\Sq}{\SqA+\SqB}            % = sum_i (partial sum)^2
+\newcommand{\CuA}{\sum_{j=1}^{N-1}(N-j)\,n_j^{3}}
+\newcommand{\CuB}{3\sum_{\substack{j,l=1\\ j\neq l}}^{N-1}\bigl(N-\max(j,l)\bigr)\,n_j^{2}n_l}
+\newcommand{\CuC}{6\sum_{j=1}^{N-3}\sum_{l=j+1}^{N-2}\sum_{q=l+1}^{N-1}(N-q)\,n_jn_ln_q}
+\newcommand{\Cu}{\CuA+\CuB+\CuC}       % = sum_i (partial sum)^3
+
+% ---------------------------------------------------------------------------
+%  Results of the ten sums.  NOTE: the longer ones contain forced line
+%  breaks "\\&\qquad" and must be used inside an align/align* environment,
+%  right after an "&".
+% ---------------------------------------------------------------------------
+\newcommand{\ResTwo}{8\pi^{3}b^{3}\Bigl[\sum_{i=1}^{N}x_i^{3}
+   -\frac{3}{N}\Bigl(\Xs\Bigr)\Bigl(\sum_{i=1}^{N}x_i^{2}\Bigr)
+   +\frac{2}{N^{2}}\Bigl(\Xs\Bigr)^{3}\Bigr]}
+\newcommand{\ResThree}{8\pi^{3}\Bigl[-\frac{2}{N^{2}}\Bigl(\Vs\Bigr)^{3}
+   +\frac{3}{N}\Bigl(\Vs\Bigr)\Bigl(\SqA\\&\qquad\qquad+\SqB\Bigr)
+   -\CuA\\&\qquad-\CuB\\&\qquad-\CuC\Bigr]}
+\newcommand{\ResSix}{12\pi^{2}b^{2}\varphi\Bigl[\sum_{i=1}^{N}x_i^{2}
+   -\frac{1}{N}\Bigl(\Xs\Bigr)^{2}\Bigr]}
+\newcommand{\ResSeven}{24\pi^{3}b^{2}\Bigl[\frac{1}{N}\Bigl(\Vs\Bigr)\sum_{i=1}^{N}x_i^{2}
+   -\Mxx\\&\qquad-\frac{2}{N^{2}}\Bigl(\Xs\Bigr)^{2}\Bigl(\Vs\Bigr)
+   +\frac{2}{N}\Bigl(\Xs\Bigr)\Mx\Bigr]}
+\newcommand{\ResEight}{12\pi^{2}\varphi\Bigl[\SqA+\SqB\\&\qquad-\frac{1}{N}\Bigl(\Vs\Bigr)^{2}\Bigr]}
+\newcommand{\ResNine}{24\pi^{3}b\Bigl[\frac{2}{N^{2}}\Bigl(\Xs\Bigr)\Bigl(\Vs\Bigr)^{2}
+   -\frac{2}{N}\Bigl(\Vs\Bigr)\Mx\\&\qquad+\MsA+\MsB\\&\qquad
+   -\frac{1}{N}\Bigl(\Xs\Bigr)\Bigl(\SqA\\&\qquad\qquad+\SqB\Bigr)\Bigr]}
+\newcommand{\ResTen}{24\pi^{2}b\varphi\Bigl[\frac{1}{N}\Bigl(\Vs\Bigr)\Bigl(\Xs\Bigr)-\Mx\Bigr]}
+
+\title{The $N$-Nanowire Qubit with Vortices:\\[2pt]
+Asymmetric Wire Positions and the Likharev Current--Phase Relation}
+\author{Shashank Satish}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We derive, from the very first step, the current--phase relation (CPR) and the Hamiltonian
+of a superconducting device made of $N$ nanowires connected in parallel between two
+electrodes, with the wires at \emph{arbitrary} (asymmetric) positions, a magnetic field
+through the loops, an arbitrary integer number of vortices $n_k$ in each of the $N-1$
+loops, and the cubic Likharev CPR for every wire.  The result has the form
+$I/I_0=A\varphi-D\varphi^{3}-R$ and
+$\hat H=-4E_C\,\partial_\varphi^{2}+\frac{\hbar I_0}{2e}\bigl(\tfrac12A\varphi^{2}-\tfrac14D\varphi^{4}-R\varphi\bigr)$,
+where $A$, $D$, $R$ are written out explicitly in terms of the wire positions $x_i$, the
+field $b$ and the vortex numbers $n_k$.  Every algebraic step, including the most basic ones,
+is written down.  Three parity checks are placed at the places where they matter most.
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+% ===========================================================================
+\section{Conventions and notation}
+% ===========================================================================
+We will calculate the CPR and the Hamiltonian for the $N$-nanowire device with vortices,
+asymmetrical, and using the Likharev CPR.
+
+\begin{center}
+\begin{tabular}{@{}l p{0.80\textwidth}@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$N\ge 2$ & number of nanowires (so there are $N-1$ loops) \\
+$i$ & wire label, $i=1,\dots,N$ (the \emph{free} label in $\varphi_i$) \\
+$x_i$ & position of wire $i$ along the electrode, in units of the outer separation $W$; $x_1<x_2<\dots<x_N$ \\
+$b$ & normalized magnetic field, $b=BLW/\Phi_0$ (flux through a loop of width $W$ in units of the flux quantum $\Phi_0=h/2e$) \\
+$n_k$ & vortex (winding) number of loop $k$, the loop between wire $k$ and wire $k+1$, $k=1,\dots,N-1$ \\
+$\varphi_i$ & continuous phase drop along wire $i$ \\
+$\varphi$ & characteristic phase, $\varphi=\frac1N\sum_i\varphi_i$ (the one free phase variable) \\
+$\varphi_0,\ I_0$ & Likharev phase scale and current scale: $I_i=I_0\bigl[\varphi_i/\varphi_0-(\varphi_i/\varphi_0)^3\bigr]$ \\
+$E_C$ & charging energy, $E_C=e^{2}/2C$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Dummy indices.}  A summation index may be called anything.  To avoid clashes when
+several sums sit inside one expression we use fixed letters: $i$ is the wire label;
+$k$ is used for sums over positions $\sum_k x_k$; $p$ for the weighted vorticity sum
+$\sum_p (N-p)n_p$; and $j,l,q$ for the partial sums of vortex numbers.
+(In the Meissner and characteristic-phase sections the loop index is also called $k$,
+as in the notes; when it is merged into the final $\varphi_i$ formula (Section~\ref{sec:phii}) it is renamed.)
+
+\textbf{Boxes.}  A framed box without a title is a result; a framed box titled ``Parity check'' is a check;
+grey boxes are remarks.
+
+% ===========================================================================
+\section{Geometry of the device}
+% ===========================================================================
+Two bulk superconducting electrodes (top and bottom) are connected by $N$ straight nanowires
+of length $L$ that run parallel to the $y$-axis (Fig.~\ref{fig:geometry}).  The wire $i$ sits
+at the position $x_i$ along the $x$-axis.  We measure $x$ in units of the outer separation
+$W$ between the first and last wire and put the origin in the middle, so that
+\begin{equation}\label{eq:norm}
+x_1=-\tfrac12,\qquad x_N=+\tfrac12,\qquad x_N-x_1=1 .
+\end{equation}
+The remaining wires are at \emph{arbitrary} positions $x_1<x_2<\dots<x_N$; this is what
+``asymmetric'' means here.  (In the symmetric case the wires are equally spaced,
+$x_i=-\tfrac12+\tfrac{i-1}{N-1}$, with spacing $d=\tfrac1{N-1}$.)  Equation~\eqref{eq:norm}
+only fixes the units in which $b$ is measured; the derivation below never uses it except in
+the explicit $N=3$ check at the end, because only differences of positions will matter.
+
+Between wire $k$ and wire $k+1$ there is the loop number $k$.  A magnetic field $B$ points
+perpendicular to the plane of the device, and we define the normalized field
+\begin{equation}\label{eq:bdef}
+b=\frac{B\,L\,W}{\Phi_0},\qquad \Phi_0=\frac{h}{2e}.
+\end{equation}
+The flux through loop $k$ (area $L\cdot W(x_{k+1}-x_k)$) is then $\Phi_0\,b\,(x_{k+1}-x_k)$.
+Loop $k$ also carries an integer number $n_k$ of vortices (winding number of the phase around
+that loop).
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=stealth,thick,scale=1.0]
+  % electrodes
+  \fill[gray!35] (-0.5,3.2) rectangle (6.5,3.6);
+  \fill[gray!35] (-0.5,-0.4) rectangle (6.5,0);
+  \draw (-0.5,3.2) rectangle (6.5,3.6);
+  \draw (-0.5,-0.4) rectangle (6.5,0);
+  % wires
+  \foreach \xx in {0,1.4,2.7,4.8,6.0}{\draw[line width=1.6pt] (\xx,0) -- (\xx,3.2);}
+  \node at (3.75,1.6) {$\cdots$};
+  % loop labels
+  \node at (0.7,1.6)  {$n_1$};
+  \node at (2.05,1.6) {$n_2$};
+  \node at (5.4,1.6)  {$n_{N-1}$};
+  % wire labels above
+  \foreach \xx/\lab in {0/1,1.4/2,2.7/3,4.8/{N-1},6.0/N}{\node[above] at (\xx,3.6) {$\lab$};}
+  \node[left] at (-0.6,3.8) {wire:};
+  % x-labels below
+  \foreach \xx/\lab in {0/x_1,1.4/x_2,2.7/x_3,4.8/x_{N-1},6.0/x_N}{\node[below] at (\xx,-0.4) {$\lab$};}
+  % axis
+  \draw[->] (-0.7,-1.5) -- (6.9,-1.5) node[right] {$x$};
+  \foreach \xx/\lab in {0/{-\tfrac12},3/0,6/{+\tfrac12}}{
+     \draw (\xx,-1.42) -- (\xx,-1.58); \node[below] at (\xx,-1.55) {$\lab$};}
+  % field
+  \node at (7.6,1.6) {$\bm B\ \odot$};
+\end{tikzpicture}
+\caption{Geometry of the device: $N$ wires between two electrodes at the (not necessarily
+equally spaced) positions $x_1<\dots<x_N$, normalized so that $x_1=-\tfrac12$ and $x_N=+\tfrac12$.
+Loop $k$ lies between wires $k$ and $k+1$ and holds $n_k$ vortices.  The field $B$ points out
+of the page.}
+\label{fig:geometry}
+\end{figure}
+
+% ===========================================================================
+\section{The Meissner phase equation}\label{sec:meissner}
+% ===========================================================================
+Going once around loop $k$ (between wire $k$ and wire $k+1$), the phase of the order parameter must
+come back to itself up to a whole number of turns (fluxoid quantization).  The flux through the loop
+contributes the phase $2\pi b\,(x_{k+1}-x_k)$, the two wires contribute $-\varphi_{k+1}+\varphi_k$, and the total
+is $2\pi$ times the vortex number $n_k$:
+\[
+2\pi b\,(x_{k+1}-x_k)-\varphi_{k+1}+\varphi_k=2\pi n_k ,
+\]
+that is,
+\begin{equation}\label{eq:meissner-step}
+\varphi_{k+1}-\varphi_k=2\pi b\,(x_{k+1}-x_k)-2\pi n_k ,\qquad k=1,\dots,N-1 .
+\end{equation}
+We want every phase in terms of the phase of the first wire.  Write~\eqref{eq:meissner-step}
+for $k=1,2,\dots,i-1$ and add the equations.  The phases and the positions telescope,
+\[
+(\varphi_2-\varphi_1)+\dots+(\varphi_i-\varphi_{i-1})=\varphi_i-\varphi_1 ,\qquad
+(x_2-x_1)+\dots+(x_i-x_{i-1})=x_i-x_1 ,
+\]
+and the vortex numbers simply add up.  Therefore
+\begin{equation}\label{eq:meissner}
+\boxed{\;\varphi_i=\varphi_1+2\pi b\,(x_i-x_1)-2\pi\sum_{k=1}^{i-1}n_k\;}\qquad[\,i=1,2,3,\dots,N\,]
+\end{equation}
+This is the Meissner phase equation (for $i=1$ it is trivially true).  In the shorthand of the notes,
+\[
+\varphi_i=\varphi_1+2\pi b\,\Delta x_i-2\pi n_{1,i},\qquad
+\Delta x_i=x_i-x_1,\quad n_{1,i}=\sum_{k=1}^{i-1}n_k .
+\]
+
+\begin{notebox}{What is different from the symmetric case}
+Only the position term changes: $x_i-x_1$ was $\frac{i-1}{N-1}$ for equally spaced wires and is now an arbitrary
+number.  The vortex sum $\sum_{k=1}^{i-1}n_k$ is a sum over loops already in the symmetric case and does not change.
+\end{notebox}
+
+% ===========================================================================
+\section{The characteristic phase}\label{sec:char}
+% ===========================================================================
+Now we will do the characteristic phase.
+
+\subsection{Definition}
+The characteristic phase is the average of the $N$ wire phases:
+\begin{equation}\label{eq:char-def}
+\varphi=\frac{\varphi_1+\varphi_2+\varphi_3+\cdots+\varphi_N}{N}
+\qquad\Longleftrightarrow\qquad
+\varphi=\frac1N\sum_{i=1}^{N}\varphi_i .
+\end{equation}
+It is the one free phase variable of the problem: $N$ wire phases minus the $N-1$ loop
+constraints~\eqref{eq:meissner-step} leaves one.  We separate the first wire from the rest,
+\[
+\varphi=\frac1N\Bigl(\varphi_1+\sum_{i=2}^{N}\varphi_i\Bigr),
+\]
+and put in the Meissner phase equation~\eqref{eq:meissner} for every wire $i=2,\dots,N$:
+\begin{equation}\label{eq:char-insert}
+\varphi=\frac1N\Biggl(\varphi_1+\sum_{i=2}^{N}\Bigl[\varphi_1+2\pi b\,(x_i-x_1)-2\pi\sum_{k=1}^{i-1}n_k\Bigr]\Biggr).
+\end{equation}
+The sum over $i$ of a bracket with three kinds of terms is the sum of three sums:
+\[
+\sum_{i=2}^{N}\Bigl[\ \cdot\ \Bigr]=
+\underbrace{\sum_{i=2}^{N}\varphi_1}_{\text{(A)}}
++\underbrace{\sum_{i=2}^{N}2\pi b\,(x_i-x_1)}_{\text{(B)}}
+-\underbrace{2\pi\sum_{i=2}^{N}\sum_{k=1}^{i-1}n_k}_{\text{(C)}} .
+\]
+
+\subsection{Sum (A)}
+$\varphi_1$ does not depend on $i$, so we add the same number once for each of
+$i=2,3,\dots,N$.  That is $N-1$ copies:
+\[
+\sum_{i=2}^{N}\varphi_1=(N-1)\,\varphi_1 .
+\]
+(If the sum were indexed from $i=1$ it would be $N\varphi_1$.)
+
+\subsection{Sum (B)}
+Pull out the constant $2\pi b$ and split the difference:
+\[
+\sum_{i=2}^{N}2\pi b\,(x_i-x_1)=2\pi b\sum_{i=2}^{N}(x_i-x_1)
+=2\pi b\Bigl(\sum_{i=2}^{N}x_i-\sum_{i=2}^{N}x_1\Bigr).
+\]
+Rewrite the first sum so that it starts at $i=1$ (add and subtract the term $x_1$):
+$\sum_{i=2}^{N}x_i=\sum_{i=1}^{N}x_i-x_1$.  The second sum is $N-1$ copies of $x_1$,
+that is $\sum_{i=2}^{N}x_1=(N-1)x_1=Nx_1-x_1$.  Hence
+\[
+2\pi b\Bigl(\sum_{i=1}^{N}x_i-x_1-Nx_1+x_1\Bigr)=2\pi b\Bigl(\sum_{i=1}^{N}x_i-Nx_1\Bigr)
+=2\pi b\sum_{i=1}^{N}x_i-2\pi b\,N x_1 .
+\]
+
+\subsection{Sum (C): the swap of sums}
+We need
+\[
+\sum_{i=2}^{N}\sum_{k=1}^{i-1}n_k .
+\]
+It is a sum over all pairs $(i,k)$ with $2\le i\le N$ and $1\le k\le i-1$, that is, over the
+points of a triangle in the $(i,k)$ grid.  The sum as written reads the triangle row by row
+(fix $i$ first, then run over $k$).  We can read the same points column by column instead
+(fix $k$ first, then run over $i$): the value $k$ occurs for $k=1,\dots,N-1$, and for a given
+$k$ the wires $i$ that contain it are $i=k+1,\dots,N$.
+
+\emph{Example, $N=4$} (written out in full):
+\[
+\sum_{i=2}^{4}\sum_{k=1}^{i-1}n_k=n_1+(n_1+n_2)+(n_1+n_2+n_3)=3n_1+2n_2+1n_3 ,
+\]
+which is $(N-1)n_1+(N-2)n_2+(N-3)n_3$ for $N=4$: the vortex number $n_1$ is counted once for
+each of the wires $i=2,3,4$ (three times), $n_2$ for $i=3,4$ (twice), $n_3$ for $i=4$ (once).
+
+\emph{General $N$.}  Swapping the order of the sums,
+\[
+\sum_{i=2}^{N}\sum_{k=1}^{i-1}n_k=\sum_{k=1}^{N-1}\sum_{i=k+1}^{N}n_k .
+\]
+The summand $n_k$ does not depend on $i$, so the inner sum just counts how many integers
+$i=k+1,\dots,N$ there are:
+\[
+\sum_{i=k+1}^{N}n_k=n_k\Bigl(\sum_{i=k+1}^{N}1\Bigr)=n_k\,(N-k).
+\]
+Therefore
+\begin{equation}\label{eq:swap}
+\boxed{\;\sum_{i=2}^{N}\sum_{k=1}^{i-1}n_k=\sum_{k=1}^{N-1}(N-k)\,n_k\;}
+\end{equation}
+(The same identity holds with the outer sum starting at $i=1$, because the $i=1$ term is the
+empty sum $0$.)  The upper limit is $N-1$: the last loop is loop $N-1$.
+
+\subsection{Putting (A), (B), (C) back}
+Now we can add all these back to the original equation~\eqref{eq:char-insert}:
+\begin{align}
+\varphi&=\frac1N\Bigl(\varphi_1+(N-1)\varphi_1+2\pi b\sum_{i=1}^{N}x_i-2\pi b\,Nx_1-2\pi\sum_{k=1}^{N-1}(N-k)n_k\Bigr)\notag\\
+&=\frac1N\Bigl(N\varphi_1+2\pi b\sum_{i=1}^{N}x_i-2\pi b\,Nx_1-2\pi\sum_{k=1}^{N-1}(N-k)n_k\Bigr)\notag\\
+&=\frac1N\Bigl(N\varphi_1+2\pi b\Bigl(\sum_{i=1}^{N}x_i-Nx_1\Bigr)\Bigr)-\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k\notag\\
+&=\varphi_1+\frac1N\,2\pi b\sum_{i=1}^{N}x_i-2\pi b\,x_1-\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k\notag\\
+&=\varphi_1+2\pi b\Bigl(\frac1N\sum_{i=1}^{N}x_i-x_1\Bigr)-\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k .\label{eq:char-result}
+\end{align}
+Solve for $\varphi_1$ (move the two last terms to the other side):
+\[
+\varphi_1=\varphi-2\pi b\Bigl(\frac1N\sum_{i=1}^{N}x_i-x_1\Bigr)+\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k ,
+\]
+and reverse the sign inside the first bracket:
+\begin{equation}\label{eq:phi1}
+\boxed{\;\varphi_1=\varphi+2\pi b\Bigl(x_1-\frac1N\sum_{i=1}^{N}x_i\Bigr)+\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)\,n_k\;}
+\end{equation}
+The phase of the first wire differs from the characteristic phase by a field part (the position
+of wire 1 relative to the mean position of all wires) and a vortex part.
+
+% ===========================================================================
+\section{Back into the Meissner phase equation: $\varphi_i$ in terms of $\varphi$}\label{sec:phii}
+% ===========================================================================
+Now we put $\varphi_1$ that we derived back into the Meissner phase equation:
+\begin{align*}
+\varphi_1&=\varphi+2\pi b\Bigl(x_1-\frac1N\sum_{i=1}^{N}x_i\Bigr)+\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k ,\\
+\varphi_i&=\varphi_1+2\pi b\,(x_i-x_1)-2\pi\sum_{k=1}^{i-1}n_k .
+\end{align*}
+
+\textbf{Note about dummy indices.}  In the formula for $\varphi_1$ the sum $\sum_{i=1}^{N}x_i$
+has no free label: it is one single number.  In $\varphi_i$, however, the letter $i$ is the free
+wire label, and it cannot also be the dummy letter of a sum inside the same formula.  So we
+rename the dummies (this changes nothing, e.g.\ $\sum_{i=1}^{N}x_i=\sum_{k=1}^{N}x_k$ is the same
+number): the position sum uses $k$, the weighted vortex sum $\sum(N-k)n_k$ uses $p$, and the
+partial vortex sum uses $j$.  Substituting,
+\begin{align*}
+\varphi_i&=\varphi+2\pi b\Bigl(x_1-\frac1N\sum_{k=1}^{N}x_k\Bigr)+\frac{2\pi}{N}\sum_{p=1}^{N-1}(N-p)n_p
+ +2\pi b\,(x_i-x_1)-2\pi\sum_{j=1}^{i-1}n_j\\[2pt]
+\varphi_i&=\varphi+2\pi b\,x_1-2\pi b\,\frac1N\sum_{k=1}^{N}x_k+\frac{2\pi}{N}\sum_{p=1}^{N-1}(N-p)n_p
+ +2\pi b\,x_i-2\pi b\,x_1-2\pi\sum_{j=1}^{i-1}n_j\\[2pt]
+\varphi_i&=\varphi-2\pi b\,\frac1N\sum_{k=1}^{N}x_k+\frac{2\pi}{N}\sum_{p=1}^{N-1}(N-p)n_p
+ +2\pi b\,x_i-2\pi\sum_{j=1}^{i-1}n_j ,
+\end{align*}
+where in the last line $+2\pi b\,x_1-2\pi b\,x_1=0$ cancelled.  Now we group the terms that carry the
+field $b$ and the terms that carry the vortex numbers:
+\begin{equation}\label{eq:phi-i}
+\boxed{\;\varphi_i=\varphi+2\pi b\Bigl(x_i-\frac1N\sum_{k=1}^{N}x_k\Bigr)
++2\pi\Bigl(\frac1N\sum_{p=1}^{N-1}(N-p)\,n_p-\sum_{j=1}^{i-1}n_j\Bigr)\;}
+\end{equation}
+The first bracket is the position of wire $i$ relative to the mean position of all the wires; the
+second bracket is the average vortex term minus the vortices to the left of wire $i$.  The part of
+$\varphi_i$ that is not $\varphi$ we call $z_i=\varphi_i-\varphi$.
+
+\begin{paritybox}{1: the formula for $\varphi_i$ at $N=3$}
+Everything that follows is built on~\eqref{eq:phi-i}, so we test it once on the smallest
+asymmetric case, $N=3$ with $x_1=-\tfrac12,\ x_2$ free, $x_3=+\tfrac12$.  Call the two vortex
+numbers $n_{12}\equiv n_1$ and $n_{23}\equiv n_2$.  For $N=3$:
+$\sum_{k}x_k=x_2$ and $\sum_p(N-p)n_p=2n_{12}+n_{23}$.  Then~\eqref{eq:phi-i} gives
+\begin{align*}
+z_1&=2\pi\Bigl[b\bigl(-\tfrac12-\tfrac13x_2\bigr)+\tfrac13(2n_{12}+n_{23})\Bigr],\\
+z_2&=2\pi\Bigl[b\bigl(x_2-\tfrac13x_2\bigr)+\tfrac13(2n_{12}+n_{23})-n_{12}\Bigr]
+   =2\pi\Bigl[\tfrac23\,b\,x_2+\tfrac13(n_{23}-n_{12})\Bigr],\\
+z_3&=2\pi\Bigl[b\bigl(\tfrac12-\tfrac13x_2\bigr)+\tfrac13(2n_{12}+n_{23})-n_{12}-n_{23}\Bigr]
+   =2\pi\Bigl[b\bigl(\tfrac12-\tfrac13x_2\bigr)-\tfrac13(n_{12}+2n_{23})\Bigr].
+\end{align*}
+\emph{(i) The mean of the three phases must be $\varphi$, i.e.\ $z_1+z_2+z_3=0$.}
+The $b$-terms give $-\tfrac12-\tfrac13x_2+\tfrac23x_2+\tfrac12-\tfrac13x_2=0$ and the vortex terms give
+$\tfrac13\bigl[(2n_{12}+n_{23})+(n_{23}-n_{12})-(n_{12}+2n_{23})\bigr]=0$.  \checkmark
+
+\emph{(ii) The differences must reproduce the Meissner relation~\eqref{eq:meissner-step}.}
+\begin{align*}
+\varphi_2-\varphi_1=z_2-z_1&=2\pi\Bigl[b\bigl(x_2+\tfrac12\bigr)-n_{12}\Bigr]=2\pi b\,(x_2-x_1)-2\pi n_{12},\\
+\varphi_3-\varphi_2=z_3-z_2&=2\pi\Bigl[b\bigl(\tfrac12-x_2\bigr)-n_{23}\Bigr]=2\pi b\,(x_3-x_2)-2\pi n_{23}.\qquad\checkmark
+\end{align*}
+\end{paritybox}
+
+% ===========================================================================
+\section{The Likharev CPR and the cube}
+% ===========================================================================
+Now that we have the equation we will plug this into the Likharev CPR.
+
+\subsection{The CPR of $N$ wires in parallel}
+For every wire the (cubic) Likharev current--phase relation is
+\[
+I_i=I_0\Bigl[\frac{\varphi_i}{\varphi_0}-\Bigl(\frac{\varphi_i}{\varphi_0}\Bigr)^{3}\Bigr],
+\]
+where $I_0$ and $\varphi_0$ are the current and phase scales of the wire; we keep $\varphi_0$
+as a symbol throughout.  The wires are in parallel, so the total current is
+$I=\sum_{i=1}^{N}I_i$:
+\begin{equation}\label{eq:likharev}
+\frac{I}{I_0}=\sum_{i=1}^{N}\Bigl[\frac{\varphi_i}{\varphi_0}-\Bigl(\frac{\varphi_i}{\varphi_0}\Bigr)^{3}\Bigr].
+\end{equation}
+Inserting the boxed formula~\eqref{eq:phi-i} for $\varphi_i$,
+\begin{align*}
+\frac{I}{I_0}=\sum_{i=1}^{N}\Biggl(&\frac{1}{\varphi_0}\Bigl[\varphi+2\pi b\Bigl(x_i-\frac1N\sum_{k=1}^{N}x_k\Bigr)+2\pi\Bigl(\frac1N\Vs-\Ps\Bigr)\Bigr]\\
+&-\frac{1}{\varphi_0^{3}}\Bigl[\varphi+2\pi b\Bigl(x_i-\frac1N\sum_{k=1}^{N}x_k\Bigr)+2\pi\Bigl(\frac1N\Vs-\Ps\Bigr)\Bigr]^{3}\Biggr).
+\end{align*}
+(The factors $1/\varphi_0$ and $1/\varphi_0^{3}$ have been written in front of the brackets.)  The first part is the \emph{linear} part, the second the \emph{cubic} part.  We will look at the
+cubic term first.
+
+\subsection{Naming the pieces}
+The thing that is cubed is $\varphi$ plus two more pieces.  We will let
+\begin{equation}\label{eq:ac-def}
+a_i=2\pi b\Bigl(x_i-\frac1N\sum_{k=1}^{N}x_k\Bigr)
+\qquad\text{and}\qquad
+c_i=2\pi\Bigl(\frac1N\sum_{p=1}^{N-1}(N-p)\,n_p-\sum_{j=1}^{i-1}n_j\Bigr),
+\end{equation}
+because naming the second piece $b$ would confuse it with the magnetic field.  Then
+$\varphi_i=\varphi+a_i+c_i$ (so $z_i=a_i+c_i$): $a_i$ is the \emph{position} (field) part and $c_i$ the
+\emph{vortex} part.  The dependence on $i$ is shown by the subscript.
+
+\subsection{Expanding the cube}
+We expand $(\varphi+a_i+c_i)^3$ by treating $a_i+c_i$ as one object:
+\[
+(\varphi+a_i+c_i)^{3}=\varphi^{3}+3\varphi^{2}(a_i+c_i)+3\varphi\,(a_i+c_i)^{2}+(a_i+c_i)^{3}.
+\]
+With $(a_i+c_i)^2=a_i^2+2a_ic_i+c_i^2$ and $(a_i+c_i)^3=a_i^3+3a_i^2c_i+3a_ic_i^2+c_i^3$,
+\begin{equation}\label{eq:ten-terms}
+(\varphi+a_i+c_i)^{3}=\varphi^{3}+a_i^{3}+c_i^{3}+3\varphi^{2}a_i+3\varphi^{2}c_i+3a_i^{2}\varphi
++3a_i^{2}c_i+3c_i^{2}\varphi+3c_i^{2}a_i+6\varphi a_ic_i .
+\end{equation}
+There are ten terms.  (A count as a sanity check: putting $\varphi=a_i=c_i=1$ the left side is $3^3=27$
+and the right side is $1+1+1+3\cdot6+6=27$.)  We number them as in the notes and place the
+summation over the collected terms:
+\begin{align*}
+\sum_{i=1}^{N}\Bigl(\underset{1}{\varphi^{3}}+\underset{2}{a_i^{3}}+\underset{3}{c_i^{3}}
++\underset{4}{3\varphi^{2}a_i}+\underset{5}{3\varphi^{2}c_i}&+\underset{6}{3a_i^{2}\varphi}\\
+&+\underset{7}{3a_i^{2}c_i}+\underset{8}{3c_i^{2}\varphi}+\underset{9}{3c_i^{2}a_i}+\underset{10}{6\varphi a_ic_i}\Bigr).
+\end{align*}
+Each of the ten terms is summed over $i=1,\dots,N$ separately in Section~\ref{sec:ten}.
+
+% ===========================================================================
+\section{Summation rules used repeatedly}\label{sec:rules}
+% ===========================================================================
+Before doing the ten sums we collect the rules that they use.  None of them is new -- the
+first two were used in Section~\ref{sec:char} -- but they are written once, with their reasons, so that each
+of the ten sums can simply refer to them.
+
+\begin{notebox}{The rules online}
+These are the standard rules for working with sums.  The pages below explain them with worked examples.
+\begin{itemize}[leftmargin=*,itemsep=3pt]
+\item \textbf{Rule 0} (constants come out of a sum; a sum of a constant is the number of terms times the constant):
+ Paul's Online Notes, \emph{Summation Notation}:\\
+ \url{https://tutorial.math.lamar.edu/classes/calcI/SummationNotation.aspx}\\
+ One Mathematical Cat, \emph{Summation Notation}:\\
+ \url{https://www.onemathematicalcat.org/Math/Algebra_II_obj/summation_notation.htm}
+\item \textbf{Rules 1 and 2} (swapping the order of a triangular double sum, with and without a weight):
+ ProofWiki, \emph{Summation of $i$ from 1 to $n$ of Summation of $j$ from 1 to $i$}, with the case $n=3$ written out:\\
+ \url{https://proofwiki.org/wiki/Summation_of_i_from_1_to_n_of_Summation_of_j_from_1_to_i/Example}\\
+ Mathematics for Computer Science, \emph{Double Trouble}, a worked swap that leaves a weight outside:\\
+ \url{https://eng.libretexts.org/Bookshelves/Computer_Science/Programming_and_Computation_Fundamentals/Mathematics_for_Computer_Science_(Lehman_Leighton_and_Meyer)/03%3A_Counting/13%3A_Sums_and_Asymptotics/13.06%3A_Double_Trouble}
+\item \textbf{Rules 3 and 4} (square and cube of a sum): Wikipedia, \emph{Multinomial theorem}, which writes out
+ $(a+b+c)^3$ with the coefficients $3$ and $6$:\\
+ \url{https://en.wikipedia.org/wiki/Multinomial_theorem}
+\end{itemize}
+\end{notebox}
+
+\textbf{Rule 0 (constants and renaming).}
+(a) If $K$ does not depend on $i$, then $\sum_{i=1}^{N}K=N\,K$, and $K$ can be pulled out of
+$\sum_{i}$.  (b) \emph{Independent of $i$:} $\varphi$, $b$, $N$, $\sum_{k=1}^{N}x_k$ and
+$\sum_{p=1}^{N-1}(N-p)n_p$.  \emph{Depending on $i$:} $x_i$ and the partial sum $\sum_{j=1}^{i-1}n_j$.
+(c) A dummy index can be renamed: $\sum_{i=1}^{N}x_i=\sum_{k=1}^{N}x_k$.
+
+\textbf{Rule 1 (swap of sums).}
+For numbers $f_1,\dots,f_{N-1}$,
+\begin{equation}\label{eq:rule1}
+\sum_{i=1}^{N}\sum_{j=1}^{i-1}f_j=\sum_{j=1}^{N-1}(N-j)\,f_j .
+\end{equation}
+This is~\eqref{eq:swap} (the $i=1$ term is empty).  Reason: the pairs $(i,j)$ with $1\le j\le i-1$
+are read column by column; for fixed $j$ the wires are $i=j+1,\dots,N$, which is $N-j$ of them.
+
+\textbf{Rule 2 (swap of sums with a weight).}
+If the summand carries a factor $g_i$ that depends on $i$, the number of wires is replaced by the
+sum of the weights:
+\begin{equation}\label{eq:rule2}
+\sum_{i=1}^{N}g_i\sum_{j=1}^{i-1}n_j=\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}g_i .
+\end{equation}
+The pair $(i,j)$ with $j\le i-1$ contributes $g_i n_j$; for fixed $j$ the allowed $i$ are
+$j+1,\dots,N$, so $n_j$ multiplies $\sum_{i=j+1}^{N}g_i$.  For $g_i=1$ this is Rule~1, because
+$\sum_{i=j+1}^{N}1=N-j$.  Taking $g_i=x_i$ or $g_i=x_i^{2}$ produces the \emph{tail sums}
+$\sum_{i=j+1}^{N}x_i$ and $\sum_{i=j+1}^{N}x_i^{2}$ of the positions of the wires to the right of
+loop $j$; these are the places where the asymmetry of the wire positions enters.
+
+\textbf{Rule 3 (square of the partial sum).}
+The square of a sum is a double sum,
+$\bigl(\sum_{j=1}^{i-1}n_j\bigr)^{2}=\sum_{j,l\le i-1}n_jn_l$.  The diagonal terms $j=l$ give $n_j^2$,
+and every off-diagonal pair $j\ne l$ appears twice, as $(j,l)$ and $(l,j)$, with the same value:
+\[
+\Bigl(\sum_{j=1}^{i-1}n_j\Bigr)^{2}=\sum_{j=1}^{i-1}n_j^{2}+2\sum_{j=1}^{i-2}\sum_{l=j+1}^{i-1}n_jn_l .
+\]
+Multiply by $g_i$ and sum over $i$.  For the diagonal part use Rule~2 with $n_j\to n_j^{2}$.  For the
+pair $(j,l)$ with $j<l$: it is present in wire $i$ exactly when $l\le i-1$, i.e.\ $i\ge l+1$, so
+it is multiplied by $\sum_{i=l+1}^{N}g_i$; the pairs have $j=1,\dots,N-2$ and $l=j+1,\dots,N-1$:
+\begin{equation}\label{eq:rule3}
+\sum_{i=1}^{N}g_i\Bigl(\sum_{j=1}^{i-1}n_j\Bigr)^{2}=\sum_{j=1}^{N-1}n_j^{2}\sum_{i=j+1}^{N}g_i
++2\sum_{j=1}^{N-2}\sum_{l=j+1}^{N-1}n_jn_l\sum_{i=l+1}^{N}g_i .
+\end{equation}
+For $g_i=1$ (and $\sum_{i=j+1}^{N}1=N-j$):
+\begin{equation}\label{eq:rule3b}
+\sum_{i=1}^{N}\Bigl(\sum_{j=1}^{i-1}n_j\Bigr)^{2}=\Sq .
+\end{equation}
+\emph{Example, $N=3$:} the left side is $0+n_1^{2}+(n_1+n_2)^{2}=2n_1^{2}+2n_1n_2+n_2^{2}$ and the right
+side is $(3-1)n_1^{2}+(3-2)n_2^{2}+2(3-2)n_1n_2$, the same.
+
+\textbf{Rule 4 (cube of the partial sum).}
+Cubing a sum gives a triple sum $\sum_{j,l,q\le i-1}n_jn_ln_q$.  Sorting the triples: all three indices
+equal gives $n_j^{3}$; exactly two equal gives $n_j^{2}n_l$ with $j\neq l$, and there are $3$ choices of which
+slot holds the odd index, so $3\sum_{j\ne l}n_j^{2}n_l$ over ordered pairs; all three different gives
+$n_jn_ln_q$ for each unordered triple $j<l<q$, which occurs in $3!=6$ orders.  A monomial whose largest
+index is $r$ is present in wire $i$ exactly when $r\le i-1$, which is true for $N-r$ wires.  Hence
+\begin{equation}\label{eq:rule4}
+\sum_{i=1}^{N}\Bigl(\sum_{j=1}^{i-1}n_j\Bigr)^{3}=\Cu .
+\end{equation}
+\emph{Example, $N=3$:} the left side is $n_1^{3}+(n_1+n_2)^{3}=2n_1^{3}+3n_1^{2}n_2+3n_1n_2^{2}+n_2^{3}$ and the right side
+is $2n_1^{3}+n_2^{3}+3\bigl[(3-2)n_1^{2}n_2+(3-2)n_2^{2}n_1\bigr]$ (no triples when $N=3$), the same.
+
+% ===========================================================================
+\section{The ten sums}\label{sec:ten}
+% ===========================================================================
+Now we sum each of the ten terms of~\eqref{eq:ten-terms} over $i=1,\dots,N$, one by one and raw, term by
+term.  The rules of Section~\ref{sec:rules} are quoted by number.
+
+% ---------------------------------------------------------------------------
+\subsection{Term 1: $\sum_i\varphi^{3}$}
+% ---------------------------------------------------------------------------
+$\varphi$ is the same for every wire, so we add the same number $N$ times:
+\[
+\boxed{\;\sum_{i=1}^{N}\varphi^{3}=N\varphi^{3}\;}
+\]
+
+% ---------------------------------------------------------------------------
+\subsection{Term 2: $\sum_i a_i^{3}$}
+% ---------------------------------------------------------------------------
+Start from $a_i=2\pi b\bigl(x_i-\frac1N\sum_{k}x_k\bigr)=2\pi b\,x_i-\frac{2\pi b}{N}\sum_{k=1}^{N}x_k$ and cube
+the difference with $(P-Q)^3=P^3-3P^2Q+3PQ^2-Q^3$, here with $P=2\pi b\,x_i$ and
+$Q=\frac{2\pi b}{N}\sum_k x_k$ (written out, no new letters):
+\begin{align*}
+a_i^{3}&=\Bigl(2\pi b\,x_i-\frac{2\pi b}{N}\sum_{k=1}^{N}x_k\Bigr)^{3}\\
+&=(2\pi b\,x_i)^{3}-3(2\pi b\,x_i)^{2}\Bigl(\frac{2\pi b}{N}\sum_{k=1}^{N}x_k\Bigr)
++3(2\pi b\,x_i)\Bigl(\frac{2\pi b}{N}\sum_{k=1}^{N}x_k\Bigr)^{2}-\Bigl(\frac{2\pi b}{N}\sum_{k=1}^{N}x_k\Bigr)^{3}\\
+&=8\pi^{3}b^{3}x_i^{3}-\frac{24\pi^{3}b^{3}x_i^{2}}{N}\sum_{k=1}^{N}x_k
++\frac{24\pi^{3}b^{3}x_i}{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}-\frac{8\pi^{3}b^{3}}{N^{3}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{3}.
+\end{align*}
+(For instance $3(2\pi b\,x_i)^2\cdot\frac{2\pi b}{N}=3\cdot4\pi^2b^2x_i^2\cdot\frac{2\pi b}{N}=\frac{24\pi^3b^3x_i^2}{N}$.)
+Now we sum each of the four pieces over $i=1,\dots,N$.  The sum $\sum_{k}x_k$ does not depend on $i$
+(Rule~0), so it is a constant:
+\begin{align*}
+&\sum_{i=1}^{N}8\pi^{3}b^{3}x_i^{3}=8\pi^{3}b^{3}\sum_{i=1}^{N}x_i^{3},\\
+&\sum_{i=1}^{N}-\frac{24\pi^{3}b^{3}x_i^{2}}{N}\sum_{k=1}^{N}x_k=-\frac{24\pi^{3}b^{3}}{N}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\sum_{i=1}^{N}x_i^{2},\\
+&\sum_{i=1}^{N}\frac{24\pi^{3}b^{3}x_i}{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}=\frac{24\pi^{3}b^{3}}{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\sum_{i=1}^{N}x_i=\frac{24\pi^{3}b^{3}}{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{3},\\
+&\sum_{i=1}^{N}-\frac{8\pi^{3}b^{3}}{N^{3}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{3}=-N\cdot\frac{8\pi^{3}b^{3}}{N^{3}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{3}=-\frac{8\pi^{3}b^{3}}{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{3}.
+\end{align*}
+In the third line $\sum_i x_i=\sum_k x_k$ (Rule~0c).  The last two combine: $\frac{24-8}{N^{2}}=\frac{16}{N^{2}}$.  So
+\begin{align*}
+\sum_{i=1}^{N}a_i^{3}&=8\pi^{3}b^{3}\sum_{i=1}^{N}x_i^{3}-\frac{24\pi^{3}b^{3}}{N}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\sum_{i=1}^{N}x_i^{2}
++\frac{16\pi^{3}b^{3}}{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{3}
+\end{align*}
+and pulling out $8\pi^3b^3$:
+\begin{resbox}
+\[
+\sum_{i=1}^{N}a_i^{3}=8\pi^{3}b^{3}\Biggl[\sum_{i=1}^{N}x_i^{3}-\frac{3}{N}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl(\sum_{i=1}^{N}x_i^{2}\Bigr)+\frac{2}{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{3}\Biggr]
+\]
+\end{resbox}
+
+\begin{paritybox}{2: the cubic position term, symmetry and $N=3$}
+Term 2 is the only place where the cube of the position part enters and it carries all of the
+asymmetry in the $b^3$ term, so we test it.
+
+\emph{(i) Parity under reflection.}  Put the wires symmetrically about the centre, $x_{N+1-i}=-x_i$.  Then
+$\sum_{k}x_k=0$ and $\sum_i x_i^{3}=0$ (odd powers cancel in pairs), so $\sum_i a_i^{3}=0$.
+This is as it must be: here $a_{N+1-i}=-a_i$, so the cubes cancel in pairs.  The formula therefore gives a
+$b^{3}$ term in $R$ only when the wire positions are asymmetric.
+
+\emph{(ii) $N=3$, $x=(-\tfrac12,\,x_2,\,+\tfrac12)$.}  Here $\sum_k x_k=x_2$,
+$\sum_i x_i^{2}=\tfrac12+x_2^{2}$, $\sum_i x_i^{3}=x_2^{3}$ (the cubes of $\mp\tfrac12$ cancel).  The result gives
+\[
+8\pi^{3}b^{3}\Bigl[x_2^{3}-\tfrac{3}{3}\,x_2\bigl(\tfrac12+x_2^{2}\bigr)+\tfrac29x_2^{3}\Bigr]
+=8\pi^{3}b^{3}\Bigl[-\tfrac12x_2+\tfrac29x_2^{3}\Bigr]=-4\pi^{3}b^{3}x_2+\tfrac{16}{9}\pi^{3}b^{3}x_2^{3}.
+\]
+Directly, with $u=x_2/3$: $a_1=-2\pi b(\tfrac12+u)$, $a_2=2\pi b\,(2u)$, $a_3=2\pi b(\tfrac12-u)$, and
+\[
+\frac{\sum_i a_i^{3}}{8\pi^{3}b^{3}}=\bigl(\tfrac12-u\bigr)^{3}-\bigl(\tfrac12+u\bigr)^{3}+8u^{3}
+=-\tfrac32u-2u^{3}+8u^{3}=-\tfrac32u+6u^{3}=-\tfrac12x_2+\tfrac29x_2^{3},
+\]
+the same.  \checkmark
+\end{paritybox}
+
+% ---------------------------------------------------------------------------
+\subsection{Term 3: $\sum_i c_i^{3}$}
+% ---------------------------------------------------------------------------
+Here $c_i=2\pi\bigl(\frac1N\sum_{p}(N-p)n_p-\sum_{j=1}^{i-1}n_j\bigr)$, so $c_i^{3}=(2\pi)^{3}(\,\cdot\,)^{3}$ and
+we cube the difference again, $(P-Q)^3=P^3-3P^2Q+3PQ^2-Q^3$, with
+$P=\frac1N\sum_p(N-p)n_p$ and $Q=\sum_{j=1}^{i-1}n_j$:
+\begin{align*}
+c_i^{3}=8\pi^{3}\Biggl[&\frac{1}{N^{3}}\Bigl(\Vs\Bigr)^{3}-\frac{3}{N^{2}}\Bigl(\Vs\Bigr)^{2}\Bigl(\Ps\Bigr)\\
+&+\frac{3}{N}\Bigl(\Vs\Bigr)\Bigl(\Ps\Bigr)^{2}-\Bigl(\Ps\Bigr)^{3}\Biggr].
+\end{align*}
+We sum the four pieces over $i=1,\dots,N$ one at a time (``pieces of $c^3$'', to keep them apart from the ten
+terms).
+
+\textbf{Piece 1.}  Nothing depends on $i$:
+\[
+\sum_{i=1}^{N}\frac{8\pi^{3}}{N^{3}}\Bigl(\Vs\Bigr)^{3}=N\cdot\frac{8\pi^{3}}{N^{3}}\Bigl(\Vs\Bigr)^{3}=\frac{8\pi^{3}}{N^{2}}\Bigl(\Vs\Bigr)^{3}.
+\]
+\textbf{Piece 2.}  The factor $(\sum_p(N-p)n_p)^2$ comes out; the swap of sums (Rule~1) gives
+$\sum_i\sum_{j=1}^{i-1}n_j=\sum_{j=1}^{N-1}(N-j)n_j$, which is the same number as $\sum_p(N-p)n_p$:
+\begin{align*}
+-\frac{24\pi^{3}}{N^{2}}\Bigl(\Vs\Bigr)^{2}\sum_{i=1}^{N}\sum_{j=1}^{i-1}n_j
+&=-\frac{24\pi^{3}}{N^{2}}\Bigl(\Vs\Bigr)^{2}\Bigl(\Vs\Bigr)\\
+&=-\frac{24\pi^{3}}{N^{2}}\Bigl(\Vs\Bigr)^{3}.
+\end{align*}
+\textbf{Piece 3.}  Here we need the sum of the square of the partial sum, Rule~3 with $g_i=1$,
+equation~\eqref{eq:rule3b}:
+\begin{align*}
+\frac{24\pi^{3}}{N}\Bigl(\Vs\Bigr)\sum_{i=1}^{N}\Bigl(\Ps\Bigr)^{2}
+&=\frac{24\pi^{3}}{N}\Bigl(\Vs\Bigr)\Bigl[\SqA\\
+&\qquad+\SqB\Bigr].
+\end{align*}
+\textbf{Piece 4.}  The cube of the partial sum, Rule~4, equation~\eqref{eq:rule4}:
+\begin{align*}
+-8\pi^{3}\sum_{i=1}^{N}\Bigl(\Ps\Bigr)^{3}&=-8\pi^{3}\Bigl[\CuA+\CuB\\
+&\qquad+\CuC\Bigr].
+\end{align*}
+Adding the four pieces, exactly as they come out (this is the form in the notes, now with the sums over $i$ carried out):
+\begin{align*}
+\sum_{i=1}^{N}c_i^{3}=\ &\frac{8\pi^{3}}{N^{2}}\Bigl(\Vs\Bigr)^{3}-\frac{24\pi^{3}}{N^{2}}\Bigl(\Vs\Bigr)^{3}\\
+&+\frac{24\pi^{3}}{N}\Bigl(\Vs\Bigr)\Bigl[\SqA+\SqB\Bigr]\\
+&-8\pi^{3}\Bigl[\CuA+\CuB+\CuC\Bigr].
+\end{align*}
+Pieces 1 and 2 have the same structure, $\frac{8-24}{N^2}=-\frac{16}{N^2}=8\cdot\bigl(-\frac{2}{N^{2}}\bigr)$:
+\begin{resbox}
+\begin{align*}
+\sum_{i=1}^{N}c_i^{3}&=\ResThree
+\end{align*}
+\end{resbox}
+
+% ---------------------------------------------------------------------------
+\subsection{Term 4: $\sum_i 3\varphi^{2}a_i$}
+% ---------------------------------------------------------------------------
+\[
+3\varphi^{2}a_i=3\varphi^{2}\Bigl(2\pi b\Bigl(x_i-\frac1N\sum_{k=1}^{N}x_k\Bigr)\Bigr)=6\pi b\varphi^{2}x_i-6\pi b\varphi^{2}\,\frac1N\sum_{k=1}^{N}x_k .
+\]
+Sum over $i$.  The first piece is $6\pi b\varphi^{2}\sum_{i}x_i$.  In the second piece the number
+$\sum_{k}x_k$ does not depend on $i$, so adding it $N$ times cancels the $\frac1N$:
+\[
+\sum_{i=1}^{N}3\varphi^{2}a_i=6\pi b\varphi^{2}\sum_{i=1}^{N}x_i-\frac{6\pi b\varphi^{2}}{N}\,N\sum_{k=1}^{N}x_k
+=6\pi b\varphi^{2}\sum_{i=1}^{N}x_i-6\pi b\varphi^{2}\sum_{k=1}^{N}x_k=0 .
+\]
+\[
+\boxed{\;\sum_{i=1}^{N}3\varphi^{2}a_i=0\;}
+\]
+
+% ---------------------------------------------------------------------------
+\subsection{Term 5: $\sum_i 3\varphi^{2}c_i$}
+% ---------------------------------------------------------------------------
+\[
+3\varphi^{2}c_i=3\varphi^{2}\Bigl(2\pi\Bigl(\frac1N\Vs-\Ps\Bigr)\Bigr)=\frac{6\pi\varphi^{2}}{N}\Vs-6\pi\varphi^{2}\Ps .
+\]
+Sum over $i$: the first piece is the same for all $i$, giving a factor $N$ that cancels the $\frac1N$; the
+second is the swap of sums (Rule~1):
+\[
+\sum_{i=1}^{N}3\varphi^{2}c_i=6\pi\varphi^{2}\Vs-6\pi\varphi^{2}\sum_{j=1}^{N-1}(N-j)n_j=0 ,
+\]
+because the two sums are the same sum with different dummy letters.
+\[
+\boxed{\;\sum_{i=1}^{N}3\varphi^{2}c_i=0\;}
+\]
+
+% ---------------------------------------------------------------------------
+\subsection{Term 6: $\sum_i 3a_i^{2}\varphi$}
+% ---------------------------------------------------------------------------
+Square the difference, $(x_i-m)^2=x_i^2-2x_im+m^2$ with $m=\frac1N\sum_kx_k$ (written out):
+\[
+3a_i^{2}\varphi=3\Bigl(2\pi b\Bigl(x_i-\frac1N\sum_{k=1}^{N}x_k\Bigr)\Bigr)^{2}\varphi
+=3\cdot4\pi^{2}b^{2}\Bigl(x_i^{2}-2x_i\frac1N\sum_{k=1}^{N}x_k+\Bigl(\frac1N\sum_{k=1}^{N}x_k\Bigr)^{2}\Bigr)\varphi .
+\]
+So $\sum_i3a_i^{2}\varphi=12\pi^{2}b^{2}\varphi\bigl(\text{(6.1)}+\text{(6.2)}+\text{(6.3)}\bigr)$ with the three pieces
+\begin{align*}
+\text{(6.1)}&\quad\sum_{i=1}^{N}x_i^{2}\qquad\text{(stays the same)},\\
+\text{(6.2)}&\quad-\sum_{i=1}^{N}2x_i\frac1N\sum_{k=1}^{N}x_k=-\frac2N\Bigl(\sum_{k=1}^{N}x_k\Bigr)\sum_{i=1}^{N}x_i=-\frac2N\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2},\\
+\text{(6.3)}&\quad\sum_{i=1}^{N}\Bigl(\frac1N\sum_{k=1}^{N}x_k\Bigr)^{2}=N\cdot\frac1{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}=\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}.
+\end{align*}
+Adding, $-\frac2N+\frac1N=-\frac1N$:
+\begin{resbox}
+\[
+\sum_{i=1}^{N}3a_i^{2}\varphi=12\pi^{2}b^{2}\varphi\Bigl[\sum_{i=1}^{N}x_i^{2}-\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\Bigr]
+\]
+\end{resbox}
+
+% ---------------------------------------------------------------------------
+\subsection{Term 7: $\sum_i 3a_i^{2}c_i$}
+% ---------------------------------------------------------------------------
+Using the square of $a_i$ from Term~6 and the definition of $c_i$,
+\[
+3a_i^{2}c_i=3\Bigl(4\pi^{2}b^{2}\Bigl(x_i^{2}-2x_i\frac1N\sum_{k=1}^{N}x_k+\Bigl(\frac1N\sum_{k=1}^{N}x_k\Bigr)^{2}\Bigr)\Bigr)\Bigl(2\pi\Bigl(\frac1N\Vs-\Ps\Bigr)\Bigr),
+\]
+and the numerical prefactor is $3\cdot4\pi^{2}b^{2}\cdot2\pi=24\pi^{3}b^{2}$:
+\[
+\sum_{i=1}^{N}3a_i^{2}c_i=24\pi^{3}b^{2}\sum_{i=1}^{N}\Bigl[x_i^{2}-\frac2Nx_i\sum_{k=1}^{N}x_k+\frac1{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\Bigr]\Bigl[\frac1N\Vs-\Ps\Bigr].
+\]
+Multiplying the $3\times2=6$ terms:
+\begin{align*}
+&\text{(7.1)}\;\; x_i^{2}\cdot\frac1N\Vs, &&\text{(7.2)}\;\; -x_i^{2}\Ps,\\
+&\text{(7.3)}\;\; -\frac2Nx_i\Bigl(\sum_{k=1}^{N}x_k\Bigr)\cdot\frac1N\Vs, &&\text{(7.4)}\;\; +\frac2Nx_i\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Ps,\\
+&\text{(7.5)}\;\; \frac1{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\cdot\frac1N\Vs, &&\text{(7.6)}\;\; -\frac1{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\Ps .
+\end{align*}
+We sum each over $i=1,\dots,N$ (the common factor $24\pi^3b^2$ is put back at the end):
+\begin{align*}
+\text{(7.1)}&\;\;\frac1N\Bigl(\Vs\Bigr)\sum_{i=1}^{N}x_i^{2}
+&&\text{only }x_i^{2}\text{ depends on }i;\\
+\text{(7.2)}&\;\;-\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i^{2}
+&&\text{Rule 2 with }g_i=x_i^{2};\\
+\text{(7.3)}&\;\;-\frac2{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl(\Vs\Bigr)\sum_{i=1}^{N}x_i\\
+&\;\;=-\frac2{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\Vs
+&&\sum_ix_i=\sum_kx_k;\\
+\text{(7.4)}&\;\;+\frac2N\Bigl(\sum_{k=1}^{N}x_k\Bigr)\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i
+&&\text{Rule 2 with }g_i=x_i;\\
+\text{(7.5)}&\;\;N\cdot\frac1{N^{3}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\Vs=\frac1{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\Vs
+&&\text{nothing depends on }i;\\
+\text{(7.6)}&\;\;-\frac1{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\sum_{j=1}^{N-1}(N-j)n_j\\
+&\;\;=-\frac1{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\Vs
+&&\text{Rule 1}.
+\end{align*}
+Pieces (7.5) and (7.6) are equal and opposite and cancel.  Collecting (7.1)--(7.4):
+\begin{resbox}
+\begin{align*}
+\sum_{i=1}^{N}3a_i^{2}c_i&=\ResSeven
+\end{align*}
+\end{resbox}
+
+% ---------------------------------------------------------------------------
+\subsection{Term 8: $\sum_i 3c_i^{2}\varphi$}
+% ---------------------------------------------------------------------------
+Square the difference, $(P-Q)^2=P^2-2PQ+Q^2$ with $P=\frac1N\sum_p(N-p)n_p$ and $Q=\sum_{j=1}^{i-1}n_j$:
+\[
+3c_i^{2}\varphi=3\varphi\cdot4\pi^{2}\Biggl[\frac1{N^{2}}\Bigl(\Vs\Bigr)^{2}-\frac2N\Bigl(\Vs\Bigr)\Bigl(\Ps\Bigr)+\Bigl(\Ps\Bigr)^{2}\Biggr].
+\]
+Summing over each piece of $i$ (the factor $12\pi^{2}\varphi$ is put back at the end):
+\begin{align*}
+\text{(8.1)}&\;\;N\cdot\frac1{N^{2}}\Bigl(\Vs\Bigr)^{2}=\frac1N\Bigl(\Vs\Bigr)^{2},\\
+\text{(8.2)}&\;\;-\frac2N\Bigl(\Vs\Bigr)\sum_{i=1}^{N}\sum_{j=1}^{i-1}n_j=-\frac2N\Bigl(\Vs\Bigr)\sum_{j=1}^{N-1}(N-j)n_j\\
+&\;\;=-\frac2N\Bigl(\Vs\Bigr)^{2}
+\qquad\text{(the constant comes out; then Rule 1)},\\
+\text{(8.3)}&\;\;\sum_{i=1}^{N}\Bigl(\Ps\Bigr)^{2}=\SqA\\
+&\qquad\qquad+\SqB\qquad\text{(Rule 3)}.
+\end{align*}
+Adding, $\frac1N-\frac2N=-\frac1N$:
+\begin{resbox}
+\begin{align*}
+\sum_{i=1}^{N}3c_i^{2}\varphi&=\ResEight
+\end{align*}
+\end{resbox}
+
+% ---------------------------------------------------------------------------
+\subsection{Term 9: $\sum_i 3c_i^{2}a_i$}
+% ---------------------------------------------------------------------------
+Using $c_i^{2}$ from Term~8 and $a_i=2\pi b\bigl(x_i-\frac1N\sum_kx_k\bigr)$, the prefactor is
+$3\cdot4\pi^{2}\cdot2\pi b=24\pi^{3}b$:
+\[
+3c_i^{2}a_i=24\pi^{3}b\,\Biggl[\frac1{N^{2}}\Bigl(\Vs\Bigr)^{2}-\frac2N\Bigl(\Vs\Bigr)\Bigl(\Ps\Bigr)+\Bigl(\Ps\Bigr)^{2}\Biggr]
+\Bigl(x_i-\frac1N\sum_{k=1}^{N}x_k\Bigr).
+\]
+Multiplying out the $3\times2=6$ terms:
+\begin{align*}
+&\text{(9.1)}\;\;\frac1{N^{2}}\Bigl(\Vs\Bigr)^{2}x_i, &&\text{(9.2)}\;\;-\frac2N\Bigl(\Vs\Bigr)x_i\Bigl(\Ps\Bigr),\\
+&\text{(9.3)}\;\;x_i\Bigl(\Ps\Bigr)^{2}, &&\text{(9.4)}\;\;-\frac1{N^{3}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl(\Vs\Bigr)^{2},\\
+&\text{(9.5)}\;\;+\frac2{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl(\Vs\Bigr)\Bigl(\Ps\Bigr), &&\text{(9.6)}\;\;-\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl(\Ps\Bigr)^{2}.
+\end{align*}
+We have to sum each over $i=1,\dots,N$:
+\begin{align*}
+\text{(9.1)}&\;\;\frac1{N^{2}}\Bigl(\Vs\Bigr)^{2}\sum_{i=1}^{N}x_i=\frac1{N^{2}}\Bigl(\Vs\Bigr)^{2}\Bigl(\sum_{k=1}^{N}x_k\Bigr),\\
+\text{(9.2)}&\;\;-\frac2N\Bigl(\Vs\Bigr)\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i\qquad\text{(Rule 2 with }g_i=x_i),\\
+\text{(9.3)}&\;\;\sum_{j=1}^{N-1}n_j^{2}\sum_{i=j+1}^{N}x_i+2\sum_{j=1}^{N-2}\sum_{l=j+1}^{N-1}n_jn_l\sum_{i=l+1}^{N}x_i\qquad\text{(Rule 3 with }g_i=x_i),\\
+\text{(9.4)}&\;\;-N\cdot\frac1{N^{3}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl(\Vs\Bigr)^{2}=-\frac1{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl(\Vs\Bigr)^{2},\\
+\text{(9.5)}&\;\;\frac2{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl(\Vs\Bigr)\sum_{j=1}^{N-1}(N-j)n_j=\frac2{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl(\Vs\Bigr)^{2}\qquad\text{(Rule 1)},\\
+\text{(9.6)}&\;\;-\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Bigl[\SqA+\SqB\Bigr]\qquad\text{(Rule 3 with }g_i=1).
+\end{align*}
+The three pieces that contain $\bigl(\sum_k x_k\bigr)\bigl(\sum_p(N-p)n_p\bigr)^{2}$ combine:
+$\frac1{N^{2}}-\frac1{N^{2}}+\frac2{N^{2}}=\frac2{N^{2}}$ (pieces (9.1), (9.4), (9.5)).  Therefore
+\begin{resbox}
+\begin{align*}
+\sum_{i=1}^{N}3c_i^{2}a_i&=\ResNine
+\end{align*}
+\end{resbox}
+
+% ---------------------------------------------------------------------------
+\subsection{Term 10: $\sum_i 6\varphi a_ic_i$}
+% ---------------------------------------------------------------------------
+\[
+a_i=2\pi b\Bigl(x_i-\frac1N\sum_{k=1}^{N}x_k\Bigr),\qquad c_i=2\pi\Bigl(\frac1N\sum_{p=1}^{N-1}(N-p)n_p-\sum_{j=1}^{i-1}n_j\Bigr).
+\]
+Multiplying it out, with the prefactor $6\varphi\cdot2\pi b\cdot2\pi=24\pi^{2}b\varphi$:
+\begin{align*}
+6\varphi a_ic_i&=24\pi^{2}b\varphi\Bigl(x_i-\frac1N\sum_{k=1}^{N}x_k\Bigr)\Bigl(\frac1N\sum_{p=1}^{N-1}(N-p)n_p-\sum_{j=1}^{i-1}n_j\Bigr)\\
+&=24\pi^{2}b\varphi\Bigl(x_i\frac1N\sum_{p=1}^{N-1}(N-p)n_p-x_i\sum_{j=1}^{i-1}n_j\\
+&\qquad\qquad-\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)\frac1N\sum_{p=1}^{N-1}(N-p)n_p+\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)\sum_{j=1}^{i-1}n_j\Bigr).
+\end{align*}
+We sum the four terms over $i$:
+\begin{align*}
+\text{(10.1)}&\;\;\frac1N\Bigl(\Vs\Bigr)\sum_{i=1}^{N}x_i\qquad\text{(only }x_i\text{ depends on }i),\\
+\text{(10.2)}&\;\;-\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i\qquad\text{(Rule 2 with }g_i=x_i),\\
+\text{(10.3)}&\;\;-N\cdot\frac1{N^{2}}\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Vs=-\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Vs,\\
+\text{(10.4)}&\;\;\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)\sum_{j=1}^{N-1}(N-j)n_j=\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)\Vs\qquad\text{(Rule 1)}.
+\end{align*}
+Terms (10.3) and (10.4) are equal and opposite, so they cancel.  What is left is
+\begin{resbox}
+\begin{align*}
+\sum_{i=1}^{N}6\varphi a_ic_i&=\ResTen
+\end{align*}
+\end{resbox}
+
+% ===========================================================================
+\section{All ten sums together}
+% ===========================================================================
+We have all ten summations.  Adding them gives the sum of the cube over all wires:
+\begin{align*}
+\sum_{i=1}^{N}\bigl(\varphi+a_i+c_i\bigr)^{3}=\ &N\varphi^{3}\ \ \text{[term 1]}\\
+&+\ResTwo\ \ \text{[term 2]}\\
+&+\ResThree\ \ \text{[term 3]}\\
+&+0\qquad\text{[terms 4 and 5]}\\
+&+\ResSix\ \ \text{[term 6]}\\
+&+\ResSeven\ \ \text{[term 7]}\\
+&+\ResEight\ \ \text{[term 8]}\\
+&+\ResNine\ \ \text{[term 9]}\\
+&+\ResTen\ \ \text{[term 10]}
+\end{align*}
+Sorted by the power of the characteristic phase: term 1 is $\propto\varphi^{3}$; terms 6, 8, 10 are $\propto\varphi$;
+terms 2, 3, 7, 9 do not contain $\varphi$; the $\varphi^{2}$ terms 4 and 5 vanish.
+
+% ===========================================================================
+\section{The linear part}
+% ===========================================================================
+We solved the cubic part; let us look at the linear part.  From~\eqref{eq:likharev},
+\[
+\frac{I}{I_0}=\underbrace{\sum_{i=1}^{N}\frac{\varphi_i}{\varphi_0}}_{\text{linear}}-\underbrace{\sum_{i=1}^{N}\Bigl(\frac{\varphi_i}{\varphi_0}\Bigr)^{3}}_{\text{cubic}} ,
+\qquad
+\text{linear:}\quad\sum_{i=1}^{N}\frac{\varphi+a_i+c_i}{\varphi_0}=\frac1{\varphi_0}\Bigl[\sum_{i=1}^{N}\varphi+\sum_{i=1}^{N}a_i+\sum_{i=1}^{N}c_i\Bigr].
+\]
+We take the three sums in turn:
+\begin{align*}
+\text{(1)}&\quad\sum_{i=1}^{N}\varphi=N\varphi,\\
+\text{(2)}&\quad\sum_{i=1}^{N}a_i=2\pi b\Bigl[\sum_{i=1}^{N}x_i-N\cdot\frac1N\sum_{k=1}^{N}x_k\Bigr]=2\pi b\Bigl[\sum_{i=1}^{N}x_i-\sum_{k=1}^{N}x_k\Bigr]=0,\\
+\text{(3)}&\quad\sum_{i=1}^{N}c_i=2\pi\Bigl[N\cdot\frac1N\sum_{p=1}^{N-1}(N-p)n_p-\sum_{i=1}^{N}\sum_{j=1}^{i-1}n_j\Bigr]
+=2\pi\Bigl[\sum_{p=1}^{N-1}(N-p)n_p-\sum_{j=1}^{N-1}(N-j)n_j\Bigr]=0 .
+\end{align*}
+In (3) the swap of sums (Rule~1) was used.  Therefore
+\[
+\boxed{\;\sum_{i=1}^{N}\frac{\varphi_i}{\varphi_0}=\frac{N\varphi}{\varphi_0}\;}
+\]
+(The vanishing of $\sum_ia_i$ and $\sum_ic_i$ is the same fact as the vanishing of Terms~4 and~5: the
+deviations from the mean add up to zero.)
+
+% ===========================================================================
+\section{Assembling $A$, $D$ and $R$}
+% ===========================================================================
+Combining the linear part and the cubic part,
+\[
+\frac{I}{I_0}=\frac{N\varphi}{\varphi_0}-\frac1{\varphi_0^{3}}\Bigl[\text{all the ten terms we calculated}\Bigr].
+\]
+We need to sort by coefficients of $\varphi$ for $A$, $D$ and $R$, in the form
+\begin{equation}\label{eq:ADR-form}
+\frac{I}{I_0}=A\varphi-D\varphi^{3}-R .
+\end{equation}
+
+\textbf{$D$: the $\varphi^{3}$ term.}  Only Term~1 contains $\varphi^{3}$:
+$-\frac{1}{\varphi_0^{3}}N\varphi^{3}$, hence
+\begin{equation}
+D=\frac{N}{\varphi_0^{3}} .
+\end{equation}
+
+\textbf{$A$: the terms linear in $\varphi$.}  Terms 6, 8 and 10 have a factor $\varphi$:
+\begin{align*}
+\text{6:}&\quad12\pi^{2}b^{2}\varphi\Bigl[\sum_{i=1}^{N}x_i^{2}-\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\Bigr]\\
+\text{8:}&\quad12\pi^{2}\varphi\Bigl[\SqA+\SqB-\frac1N\Bigl(\Vs\Bigr)^{2}\Bigr]\\
+\text{10:}&\quad24\pi^{2}b\varphi\Bigl[\frac1N\Bigl(\Vs\Bigr)\Bigl(\sum_{k=1}^{N}x_k\Bigr)-\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i\Bigr]
+\end{align*}
+and the linear part gives $\frac{N\varphi}{\varphi_0}=\frac{N\varphi_0^{2}}{\varphi_0^{3}}\varphi$.  Writing
+$A\varphi=\frac{N\varphi}{\varphi_0}-\frac1{\varphi_0^{3}}(6+8+10)$ and dividing by $\varphi$:
+\begin{resbox}
+\begin{align*}
+A=\frac1{\varphi_0^{3}}\Biggl\{&N\varphi_0^{2}-12\pi^{2}b^{2}\Bigl[\sum_{i=1}^{N}x_i^{2}-\frac1N\Bigl(\sum_{k=1}^{N}x_k\Bigr)^{2}\Bigr]\\
+&-24\pi^{2}b\Bigl[\frac1N\Bigl(\sum_{p=1}^{N-1}(N-p)n_p\Bigr)\Bigl(\sum_{k=1}^{N}x_k\Bigr)-\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i\Bigr]\\
+&-12\pi^{2}\Bigl[\sum_{j=1}^{N-1}(N-j)n_j^{2}+2\sum_{j=1}^{N-2}\sum_{l=j+1}^{N-1}(N-l)n_jn_l\\
+&\qquad\qquad-\frac1N\Bigl(\sum_{p=1}^{N-1}(N-p)n_p\Bigr)^{2}\Bigr]\Biggr\}
+\end{align*}
+\end{resbox}
+
+\textbf{$R$: the terms without $\varphi$.}  Now the remaining sums belong to $R$: terms 2, 7, 9, 3.  Since the
+cubic part enters with a minus sign in~\eqref{eq:ADR-form} and $R$ is subtracted, $R$ is
+$\frac1{\varphi_0^{3}}$ times their sum:
+\begin{resbox}
+\begin{align*}
+R=\frac1{\varphi_0^{3}}\Biggl\{&\ \ResTwo\\
+&+\ResSeven\\
+&+\ResNine\\
+&+\ResThree\ \Biggr\}
+\end{align*}
+\end{resbox}
+In the last line the four pieces of Term~3 have already been added up as in the box of Term~3, with the sums
+over $i$ carried out.
+
+So, collecting,
+\begin{equation}\label{eq:CPR-final}
+\boxed{\;\frac{I}{I_0}=A\varphi-D\varphi^{3}-R,\qquad D=\frac{N}{\varphi_0^{3}}\;}
+\end{equation}
+with $A$ and $R$ the explicit expressions above.
+
+% ===========================================================================
+\section{The Hamiltonian}\label{sec:ham}
+% ===========================================================================
+The wire phases are $\varphi_i=\varphi+z_i$, where the shifts $z_i=a_i+c_i$ are fixed numbers
+(they depend on the wire positions, on $b$ and on the vortex numbers $n_k$, but not on $\varphi$).  So when the
+characteristic phase changes by $d\varphi$, every wire phase changes by the same $d\varphi$, and the energy
+$U$ stored in the junctions obeys, wire by wire, $\partial U_i/\partial\varphi_i=\frac{\hbar}{2e}I_i$.  Adding the
+$N$ wires,
+\[
+\frac{dU}{d\varphi}=\frac{\hbar}{2e}\sum_{i=1}^{N}I_i=\frac{\hbar I_0}{2e}\,\frac{I}{I_0}
+=\frac{\hbar I_0}{2e}\bigl(A\varphi-D\varphi^{3}-R\bigr).
+\]
+Integrating over $\varphi$ (and dropping the constant),
+\[
+U(\varphi)=\frac{\hbar I_0}{2e}\Bigl(\tfrac12A\varphi^{2}-\tfrac14D\varphi^{4}-R\varphi\Bigr).
+\]
+For the kinetic term nothing changes compared to the symmetric case: the loop constraints fix the $N-1$
+relative phases and leave $\varphi$ as the only dynamical variable.  With the charge $Q=2e\hat n$, where
+$\hat n=-i\,\partial_\varphi$ is conjugate to $\varphi$, and $E_C=e^{2}/2C$, the charging energy is
+$\frac{Q^{2}}{2C}=4E_C\hat n^{2}=-4E_C\,\partial_\varphi^{2}$.  Hence
+\begin{resbox}
+\[
+\hat H=-4E_C\,\frac{\partial^{2}}{\partial\varphi^{2}}+\frac{\hbar I_0}{2e}\Bigl(\frac12A\varphi^{2}-\frac14D\varphi^{4}-R\varphi\Bigr)
+\]
+\end{resbox}
+\begin{notebox}{On the sign of the potential term}
+The sign in front of $\frac{\hbar I_0}{2e}$ is $+$: the current is the
+derivative of the energy, $I=\frac{2e}{\hbar}\,\partial U/\partial\varphi$.  A check is the ordinary Josephson junction,
+$I=I_c\sin\varphi$, $U=-E_J\cos\varphi$ with $E_J=\hbar I_c/2e$, so $\partial U/\partial\varphi=+\frac{\hbar I_c}{2e}\sin\varphi$.
+Equivalently, for small $\varphi$ the term $\frac{\hbar I_0}{2e}\cdot\frac12A\varphi^{2}$ must have positive curvature when $A>0$
+(the junction sits in a minimum at $\varphi\approx0$); with a minus sign it would sit on a maximum.
+\end{notebox}
+
+% ===========================================================================
+\section{Parity check of the final result}
+% ===========================================================================
+\begin{paritybox}{3: $N=2$ and $N=3$ limits of $A$, $D$, $R$}
+The general formulas must contain the two earlier results as special cases.
+
+\emph{$N=2$.}  Two wires $x_1=-\tfrac12$, $x_2=+\tfrac12$ and one loop with vortex number $n_1$.  Then
+$\sum_kx_k=0$, $\sum_ix_i^{2}=\tfrac12$, $\sum_ix_i^{3}=0$, $\sum_p(N-p)n_p=n_1$, the double and triple sums of the
+vortex numbers are empty, $\sum_{j}(N-j)n_j^{2}=n_1^{2}$ and $\sum_jn_j\sum_{i>j}x_i=\tfrac12n_1$.  Then
+\[
+A\varphi_0^{3}=2\varphi_0^{2}-12\pi^{2}b^{2}\bigl(\tfrac12-0\bigr)-24\pi^{2}b\bigl(0-\tfrac12n_1\bigr)-12\pi^{2}\bigl(n_1^{2}-\tfrac12n_1^{2}\bigr)
+=2\varphi_0^{2}-6\pi^{2}(b-n_1)^{2},
+\]
+so the vortex enters only through the combination $b-n_1$ (a vortex in the loop shifts the flux by one flux quantum), $D=2/\varphi_0^{3}$, and
+all four contributions to $R$ vanish: Term~2 vanishes because $\sum_kx_k=\sum_ix_i^{3}=0$; Term~7 gives
+$24\pi^{3}b^{2}\bigl[\tfrac12n_1\cdot\tfrac12-n_1\cdot\tfrac14\bigr]=0$; Term~9 gives
+$24\pi^{3}b\bigl[-n_1\cdot\tfrac12n_1+\tfrac12n_1^{2}\bigr]=0$; Term~3 gives
+$8\pi^{3}\bigl[-\tfrac12n_1^{3}+\tfrac32n_1^{3}-n_1^{3}\bigr]=0$.  So $R=0$, as expected for two wires.  \checkmark
+
+\emph{$N=3$.}  Take $x=(-\tfrac12,x_2,\tfrac12)$ and call $n_1=n_{12}$, $n_2=n_{23}$.  Then $\sum_kx_k=x_2$,
+$\sum_ix_i^{2}=\tfrac12+x_2^{2}$, $\sum_p(N-p)n_p=2n_{12}+n_{23}$,
+$\sum_jn_j\sum_{i>j}x_i=n_{12}(x_2+\tfrac12)+\tfrac12n_{23}$, and
+$\sum_j(N-j)n_j^2+2\sum_{j<l}(N-l)n_jn_l=2n_{12}^{2}+2n_{12}n_{23}+n_{23}^{2}$.  Inserting,
+\[
+\varphi_0^{3}A=3\varphi_0^{2}-6\pi^{2}b^{2}-8\pi^{2}b^{2}x_2^{2}+12\pi^{2}b\,(n_{12}+n_{23})+8\pi^{2}b\,x_2\,(n_{12}-n_{23})-8\pi^{2}\bigl(n_{12}^{2}+n_{12}n_{23}+n_{23}^{2}\bigr),
+\]
+and the four contributions to $R$ are
+\begin{align*}
+\text{term 2:}&\quad\pi^{3}\bigl[\tfrac{16}{9}b^{3}x_2^{3}-4b^{3}x_2\bigr],\\
+\text{term 7:}&\quad\pi^{3}\bigl[-\tfrac83b^{2}x_2^{2}(n_{12}-n_{23})+8b^{2}x_2(n_{12}+n_{23})+2b^{2}(n_{12}-n_{23})\bigr],\\
+\text{term 9:}&\quad\pi^{3}\bigl[-\tfrac83b\,x_2(n_{12}^{2}+4n_{12}n_{23}+n_{23}^{2})-4b(n_{12}^{2}-n_{23}^{2})\bigr],\\
+\text{term 3:}&\quad\pi^{3}\bigl[\tfrac{16}{9}n_{12}^{3}+\tfrac83n_{12}^{2}n_{23}-\tfrac83n_{12}n_{23}^{2}-\tfrac{16}{9}n_{23}^{3}\bigr].
+\end{align*}
+Their sum, together with $D=3/\varphi_0^{3}$, is the closed-form three-nanowire asymmetric result derived earlier in this
+project,
+$A=\bigl[3\varphi_0^{2}-3\pi^{2}\bigl(2b^{2}+\tfrac83b^{2}x_2^{2}-4b(n_{12}+n_{23})-\tfrac83b\,x_2(n_{12}-n_{23})+\tfrac83(n_{12}^{2}+n_{12}n_{23}+n_{23}^{2})\bigr)\bigr]/\varphi_0^{3}$,
+and the same $R$.  \checkmark  (The term-2 line is the $b^{3}$ part already found in Parity check~2.  The general formulas for $A$, $D$, $R$ were also
+compared with the direct wire-by-wire sum $\sum_i[\varphi_i/\varphi_0-(\varphi_i/\varphi_0)^{3}]$ in exact arithmetic for
+$N=2,\dots,8$ with random positions, $b$ and $n_k$.)
+\end{paritybox}
+
+\end{document}

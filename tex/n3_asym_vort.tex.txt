@@ -1,0 +1,159 @@
+%% Adding Vortices: 3 Nanowires, Asymmetric Case ($x_2\neq0$)
+%% Author: Shashank Satish. Typed from the handwritten notes. Compile with pdfLaTeX (Overleaf default).
+\documentclass[10pt]{article}
+\usepackage[letterpaper,margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!50!black,bookmarks=false]{hyperref}
+\numberwithin{equation}{section}
+\allowdisplaybreaks[1]
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\newtcolorbox{resbox}{enhanced,breakable,fontupper=\small,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{paritybox}[1]{enhanced,breakable,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,fonttitle=\bfseries,colbacktitle=white,coltitle=black,titlerule=0.4pt,title={Parity check #1},left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{notebox}[1]{enhanced,breakable,colback=gray!7,colframe=gray!60,boxrule=0.5pt,arc=2pt,fonttitle=\bfseries,title={#1},left=6pt,right=6pt}
+% device sketch: \device{list of x positions in [0,6]}{labels}
+\newcommand{\device}[2]{%
+\begin{tikzpicture}[thick,scale=0.9]
+ \fill[gray!35] (-0.5,3.0) rectangle (6.5,3.4); \draw (-0.5,3.0) rectangle (6.5,3.4);
+ \fill[gray!35] (-0.5,-0.4) rectangle (6.5,0); \draw (-0.5,-0.4) rectangle (6.5,0);
+ \foreach \xx/\lab in {#1}{\draw[line width=1.6pt] (\xx,0) -- (\xx,3.0); \node[below] at (\xx,-0.4) {\small$\lab$};}
+ #2
+\end{tikzpicture}}
+\author{Shashank Satish}
+\date{\today}
+\title{Adding Vortices: 3 Nanowires, Asymmetric Case ($x_2\neq0$)}
+\begin{document}
+\maketitle
+\textbf{Introduction.} Now we are introducing the same thing except the wire $x_2$ is not in its central position, $x_2\neq0$. We are going to write the Hamiltonian for this case and produce the potential energy function as a function of $x_2$ ($x_2\neq0$ also breaks the parity symmetry). We have also taken into account the fact that vortices are present in both loops.
+
+\section{Geometry of the device}
+\begin{figure}[H]\centering
+\device{0/x_1=-0.5,3.9/x_2,6/x_3=0.5}{\draw[dashed,thin] (3,0)--(3,3.0); \node[above] at (3,3.4){\small $x=0$}; \node at (1.6,1.5){$n_{12}$}; \node at (4.95,1.5){$n_{23}$}; \node at (0,3.75){$\Phi_1$}; \node at (3.9,3.75){$\Phi_2$}; \node at (6,3.75){$\Phi_3$};}
+\end{figure}
+\[
+\Delta x_{12}=x_2-(-0.5)=x_2+0.5,\qquad \Delta x_{23}=0.5-x_2,\qquad \Delta x_{13}=x_3-x_1=1 .
+\]
+
+\section{Meissner phase equations}
+\begin{align*}
+\Phi_2&=\Phi_1+2\pi b\Delta x_{12}-2\pi n_{12}=\Phi_1+2\pi b(x_2+0.5)-2\pi n_{12}=\Phi_1+2\pi bx_2+\pi b-2\pi n_{12}\\
+\Phi_3&=\Phi_2+2\pi b\Delta x_{23}-2\pi n_{23}=\Phi_2+2\pi b(0.5-x_2)-2\pi n_{23}=\Phi_2+\pi b-2\pi bx_2-2\pi n_{23}
+\end{align*}
+so $\Phi_3=\Phi_1+2\pi bx_2+\pi b-2\pi n_{12}+\pi b-2\pi bx_2-2\pi n_{23}=\Phi_1+2\pi b-2\pi(n_{12}+n_{23})$.
+
+\section{Characteristic phase}
+\begin{align*}
+\varphi&=\frac{\Phi_1+\Phi_2+\Phi_3}{3}=\frac{\Phi_1+\Phi_1+2\pi bx_2+\pi b-2\pi n_{12}+\Phi_1+2\pi b-2\pi(n_{12}+n_{23})}{3}\\
+&=\frac{3\Phi_1+2\pi bx_2+3\pi b-4\pi n_{12}-2\pi n_{23}}{3}=\Phi_1+\frac{2\pi}{3}bx_2+\pi b-\frac{2\pi}{3}(2n_{12}+n_{23})
+\end{align*}
+\[
+\boxed{\Phi_1=\varphi-\pi b-\frac{2\pi}{3}bx_2+\frac{2\pi}{3}(2n_{12}+n_{23})}
+\]
+Therefore
+\begin{align*}
+\Phi_2&=\Phi_1+2\pi bx_2+\pi b-2\pi n_{12}=\varphi-\pi b-\tfrac{2\pi}{3}bx_2+\tfrac{2\pi}{3}(2n_{12}+n_{23})+2\pi bx_2+\pi b-2\pi n_{12}\\
+&\boxed{\Phi_2=\varphi+\frac{4\pi}{3}bx_2-\frac{2\pi}{3}(n_{12}-n_{23})}\\
+\Phi_3&=\Phi_1+2\pi b-2\pi(n_{12}+n_{23})=\varphi-\pi b-\tfrac{2\pi}{3}bx_2+\tfrac{2\pi}{3}(2n_{12}+n_{23})+2\pi b-2\pi(n_{12}+n_{23})\\
+&\boxed{\Phi_3=\varphi+\pi b-\frac{2\pi}{3}bx_2-\frac{2\pi}{3}(n_{12}+2n_{23})}
+\end{align*}
+
+\section{Likharev CPR in terms of the characteristic phase}
+We let
+\[
+z=-\pi b-\tfrac{2\pi}{3}bx_2+\tfrac{2\pi}{3}(2n_{12}+n_{23}),\qquad
+t=\tfrac{4\pi}{3}bx_2-\tfrac{2\pi}{3}(n_{12}-n_{23}),\qquad
+w=\pi b-\tfrac{2\pi}{3}bx_2-\tfrac{2\pi}{3}(n_{12}+2n_{23}),
+\]
+so that $\Phi_1=\varphi+z$, $\Phi_2=\varphi+t$, $\Phi_3=\varphi+w$, and
+\begin{align*}
+\frac{I}{I_0}&=\Bigl[\frac{\varphi+z}{\varphi_0}-\Bigl(\frac{\varphi+z}{\varphi_0}\Bigr)^3\Bigr]+\Bigl[\frac{\varphi+t}{\varphi_0}-\Bigl(\frac{\varphi+t}{\varphi_0}\Bigr)^3\Bigr]+\Bigl[\frac{\varphi+w}{\varphi_0}-\Bigl(\frac{\varphi+w}{\varphi_0}\Bigr)^3\Bigr]\\
+&=\frac{\varphi_0^2\varphi+\varphi_0^2z-\varphi^3-z^3-3\varphi^2z-3\varphi z^2}{\varphi_0^3}+\frac{\varphi_0^2\varphi+\varphi_0^2t-\varphi^3-t^3-3\varphi^2t-3\varphi t^2}{\varphi_0^3}\\
+&\quad+\frac{\varphi_0^2\varphi+\varphi_0^2w-\varphi^3-w^3-3\varphi^2w-3\varphi w^2}{\varphi_0^3}\\
+&=\frac{3\varphi_0^2\varphi+\varphi_0^2(z+t+w)-3\varphi^3-z^3-t^3-w^3-3\varphi^2(z+t+w)-3\varphi(z^2+t^2+w^2)}{\varphi_0^3}.
+\end{align*}
+\textbf{Compute $z+t+w$:}
+\[
+-\pi b-\tfrac{2\pi}{3}bx_2+\tfrac{2\pi}{3}(2n_{12}+n_{23})+\tfrac{4\pi}{3}bx_2-\tfrac{2\pi}{3}(n_{12}-n_{23})+\pi b-\tfrac{2\pi}{3}bx_2-\tfrac{2\pi}{3}(n_{12}+2n_{23})=0 .
+\]
+So
+\[
+\frac{I}{I_0}=\frac{3\varphi_0^2\varphi-3\varphi^3-(z^3+t^3+w^3)-3\varphi(z^2+t^2+w^2)}{\varphi_0^3}.
+\]
+
+\section{The squares}
+\begin{align*}
+z^2&=\Bigl(-\pi b-\tfrac{2\pi}{3}bx_2+\tfrac{4\pi}{3}n_{12}+\tfrac{2\pi}{3}n_{23}\Bigr)^2\\
+&=\pi^2\Bigl[b^2+\tfrac43b^2x_2+\tfrac49b^2x_2^2-\tfrac83bn_{12}-\tfrac43bn_{23}-\tfrac{16}{9}bx_2n_{12}-\tfrac89bx_2n_{23}+\tfrac{16}{9}n_{12}^2+\tfrac{16}{9}n_{12}n_{23}+\tfrac49n_{23}^2\Bigr]\\
+t^2&=\Bigl(\tfrac{4\pi}{3}bx_2-\tfrac{2\pi}{3}n_{12}+\tfrac{2\pi}{3}n_{23}\Bigr)^2
+=\pi^2\Bigl[\tfrac{16}{9}b^2x_2^2-\tfrac{16}{9}bx_2n_{12}+\tfrac{16}{9}bx_2n_{23}+\tfrac49n_{12}^2-\tfrac89n_{12}n_{23}+\tfrac49n_{23}^2\Bigr]\\
+w^2&=\Bigl(\pi b-\tfrac{2\pi}{3}bx_2-\tfrac{2\pi}{3}n_{12}-\tfrac{4\pi}{3}n_{23}\Bigr)^2\\
+&=\pi^2\Bigl[b^2-\tfrac43b^2x_2+\tfrac49b^2x_2^2-\tfrac43bn_{12}-\tfrac83bn_{23}+\tfrac89bx_2n_{12}+\tfrac{16}{9}bx_2n_{23}+\tfrac49n_{12}^2+\tfrac{16}{9}n_{12}n_{23}+\tfrac{16}{9}n_{23}^2\Bigr]
+\end{align*}
+Adding like terms:
+\begin{resbox}
+\[
+z^2+t^2+w^2=\pi^2\Bigl[2b^2+\tfrac83b^2x_2^2-4b(n_{12}+n_{23})-\tfrac83bx_2(n_{12}-n_{23})+\tfrac83\bigl(n_{12}^2+n_{12}n_{23}+n_{23}^2\bigr)\Bigr]
+\]
+\end{resbox}
+
+\section{The cubes}
+Since $z+t+w=0$, $w=-(z+t)$ and
+\begin{align*}
+w^3&=-(z^3+t^3+3z^2t+3zt^2)=-z^3-t^3-3z^2t-3zt^2\\
+w^3+z^3+t^3&=-3zt(z+t)=-3zt(-w)=3zwt .
+\end{align*}
+First the product $zt$, collecting like terms:
+\[
+zt=\pi^2\Bigl[-\tfrac43b^2x_2-\tfrac89b^2x_2^2+\tfrac23bn_{12}-\tfrac23bn_{23}+\tfrac{20}{9}bx_2n_{12}+\tfrac49bx_2n_{23}-\tfrac89n_{12}^2+\tfrac49n_{12}n_{23}+\tfrac49n_{23}^2\Bigr],
+\]
+then multiplying by $w=\pi b-\frac{2\pi}{3}bx_2-\frac{2\pi}{3}n_{12}-\frac{4\pi}{3}n_{23}$ and by $3$ gives
+\begin{resbox}
+\begin{align*}
+z^3+t^3+w^3=3zwt=\pi^3\Bigl[&\tfrac{16}{9}b^3x_2^3-4b^3x_2-\tfrac83b^2x_2^2(n_{12}-n_{23})+8b^2x_2(n_{12}+n_{23})+2b^2(n_{12}-n_{23})\\
+&-\tfrac83bx_2(n_{12}^2+4n_{12}n_{23}+n_{23}^2)-4b(n_{12}^2-n_{23}^2)+\tfrac{16}{9}n_{12}^3+\tfrac83n_{12}^2n_{23}-\tfrac83n_{12}n_{23}^2-\tfrac{16}{9}n_{23}^3\Bigr]
+\end{align*}
+\end{resbox}
+
+\section{Plugging back into the CPR}
+\[
+\frac{I}{I_0}=\frac{3\varphi_0^2-3\pi^2\bigl[2b^2+\frac83b^2x_2^2-4b(n_{12}+n_{23})-\frac83bx_2(n_{12}-n_{23})+\frac83(n_{12}^2+n_{12}n_{23}+n_{23}^2)\bigr]}{\varphi_0^3}\varphi-\frac{3}{\varphi_0^3}\varphi^3-\frac{z^3+t^3+w^3}{\varphi_0^3}
+\]
+\begin{resbox}
+\[
+\frac{I}{I_0}=A\varphi-D\varphi^3-R
+\]
+\[
+A=\frac{3\varphi_0^2-3\pi^2\bigl[2b^2+\frac83b^2x_2^2-4b(n_{12}+n_{23})-\frac83bx_2(n_{12}-n_{23})+\frac83(n_{12}^2+n_{12}n_{23}+n_{23}^2)\bigr]}{\varphi_0^3},\qquad D=\frac{3}{\varphi_0^3}
+\]
+\begin{align*}
+R=\frac{\pi^3}{\varphi_0^3}\Bigl[&\tfrac{16}{9}b^3x_2^3-4b^3x_2-\tfrac83b^2x_2^2(n_{12}-n_{23})+8b^2x_2(n_{12}+n_{23})+2b^2(n_{12}-n_{23})\\
+&-\tfrac83bx_2(n_{12}^2+4n_{12}n_{23}+n_{23}^2)-4b(n_{12}^2-n_{23}^2)+\tfrac{16}{9}n_{12}^3+\tfrac83n_{12}^2n_{23}-\tfrac83n_{12}n_{23}^2-\tfrac{16}{9}n_{23}^3\Bigr]
+\end{align*}
+\end{resbox}
+\begin{notebox}{Factored form of $R$ and checks}
+The bracket factors into three linear pieces:
+\[
+R=\frac{2\pi^3}{9\varphi_0^3}\,(2bx_2-n_{12}+n_{23})\,(2bx_2-3b+2n_{12}+4n_{23})\,(2bx_2+3b-4n_{12}-2n_{23}).
+\]
+At $x_2=0$ this reduces to the symmetric vortex result $R=\frac{2\pi^3}{\varphi_0^3}(n_{12}-n_{23})[b^2-2b(n_{12}+n_{23})+\frac49(2n_{12}^2+5n_{12}n_{23}+2n_{23}^2)]$, and at $n_{12}=n_{23}=0$ to $R=\frac{4\pi^3b^3x_2(4x_2^2-9)}{9\varphi_0^3}$. All of $A$ and $R$ were checked symbolically against the direct three-wire CPR sum.
+\end{notebox}
+
+\section{Deriving the Hamiltonian}
+$\hat H=T+U$; for the kinetic energy (depends on $Q$ and $C$), $T=\frac{Q^2}{2C}$, $Q=2e\hat N$, $[\hat\varphi,\hat N]=i$, $\hat N=-i\partial_\varphi$, $E_C=\frac{e^2}{2C}$, so $T=-4E_C\,\partial_\varphi^2$. Following the same procedure as for the 2-nanowire Hamiltonian, $V=\frac{\hbar}{2e}\frac{d\varphi}{dt}$, $P=IV$,
+\[
+U(\varphi)=\int P\,dt=\frac{\hbar}{2e}\int_0^\varphi I(\varphi')\,d\varphi'=\frac{\hbar I_0}{2e}\int_0^\varphi(A\varphi'-D\varphi'^3-R)\,d\varphi'=\frac{\hbar I_0}{2e}\Bigl(\frac{A\varphi^2}{2}-\frac{D\varphi^4}{4}-R\varphi\Bigr).
+\]
+\begin{resbox}
+\textbf{Total Hamiltonian}
+\[
+\hat H=-4E_C\,\partial_\varphi^2+\frac{\hbar I_0}{2e}\Bigl(\frac{A\varphi^2}{2}-\frac{D\varphi^4}{4}-R\varphi\Bigr)
+\]
+with $A$, $D$, $R$ as boxed above.
+\end{resbox}
+
+\end{document}

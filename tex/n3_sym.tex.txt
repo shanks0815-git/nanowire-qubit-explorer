@@ -1,0 +1,147 @@
+%% 3-Nanowire Qubit Hamiltonian (Symmetric Case, $x_2=0$)
+%% Author: Shashank Satish. Typed from the handwritten notes. Compile with pdfLaTeX (Overleaf default).
+\documentclass[10pt]{article}
+\usepackage[letterpaper,margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!50!black,bookmarks=false]{hyperref}
+\numberwithin{equation}{section}
+\allowdisplaybreaks[1]
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\newtcolorbox{resbox}{enhanced,breakable,fontupper=\small,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{paritybox}[1]{enhanced,breakable,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,fonttitle=\bfseries,colbacktitle=white,coltitle=black,titlerule=0.4pt,title={Parity check #1},left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{notebox}[1]{enhanced,breakable,colback=gray!7,colframe=gray!60,boxrule=0.5pt,arc=2pt,fonttitle=\bfseries,title={#1},left=6pt,right=6pt}
+% device sketch: \device{list of x positions in [0,6]}{labels}
+\newcommand{\device}[2]{%
+\begin{tikzpicture}[thick,scale=0.9]
+ \fill[gray!35] (-0.5,3.0) rectangle (6.5,3.4); \draw (-0.5,3.0) rectangle (6.5,3.4);
+ \fill[gray!35] (-0.5,-0.4) rectangle (6.5,0); \draw (-0.5,-0.4) rectangle (6.5,0);
+ \foreach \xx/\lab in {#1}{\draw[line width=1.6pt] (\xx,0) -- (\xx,3.0); \node[below] at (\xx,-0.4) {\small$\lab$};}
+ #2
+\end{tikzpicture}}
+\author{Shashank Satish}
+\date{\today}
+\title{3-Nanowire Qubit Hamiltonian (Symmetric Case, $x_2=0$)}
+\begin{document}
+\maketitle
+\section{Geometry of the device}
+\begin{figure}[H]\centering
+\device{0/x_1=-0.5,3/x_2=0,6/x_3=0.5}{\node at (0,3.7){$\Phi_1$}; \node at (3,3.7){$\Phi_2$}; \node at (6,3.7){$\Phi_3$};}
+\caption{Three nanowires between two electrodes. The middle wire is equidistant from the end wires.}
+\end{figure}
+\begin{align*}
+\Delta x_{12}&=x_2-x_1=0.5\\
+\Delta x_{23}&=x_3-x_2=0.5\\
+\Delta x_{13}&=x_3-x_1=0.5-(-0.5)=1
+\end{align*}
+We are going to assume that the second wire in the middle is equidistant from the end wires ($x_2=0$).
+
+\textbf{Meissner phase equations for 3 nanowires:}
+\begin{align*}
+\Phi_2&=\Phi_1+2\pi b\,\Delta x_{12}\\
+\Phi_3&=\Phi_2+2\pi b\,\Delta x_{23}
+\end{align*}
+\textbf{Characteristic phase:}
+\[
+\varphi=\frac{\Phi_1+\Phi_2+\Phi_3}{3}
+\]
+
+\section{The Likharev CPR in terms of the characteristic phase}
+\[
+\frac{I(\Phi)}{I_0}=\frac{\Phi}{\varphi_0}-\Bigl[\frac{\Phi}{\varphi_0}\Bigr]^3
+\]
+Add all the currents (current sum) using the CPR:
+\begin{align*}
+\frac{I}{I_0}&=\Bigl(\frac{\Phi_1}{\varphi_0}-\Bigl(\frac{\Phi_1}{\varphi_0}\Bigr)^3\Bigr)+\Bigl(\frac{\Phi_2}{\varphi_0}-\Bigl(\frac{\Phi_2}{\varphi_0}\Bigr)^3\Bigr)+\Bigl(\frac{\Phi_3}{\varphi_0}-\Bigl(\frac{\Phi_3}{\varphi_0}\Bigr)^3\Bigr)\\
+&=\Bigl(\frac{\Phi_1}{\varphi_0}-\Bigl(\frac{\Phi_1}{\varphi_0}\Bigr)^3\Bigr)+\Bigl(\frac{\Phi_1+2\pi b\Delta x_{12}}{\varphi_0}-\Bigl(\frac{\Phi_1+2\pi b\Delta x_{12}}{\varphi_0}\Bigr)^3\Bigr)\\
+&\quad+\Bigl(\frac{\Phi_1+2\pi b\Delta x_{12}+2\pi b\Delta x_{23}}{\varphi_0}-\Bigl(\frac{\Phi_1+2\pi b\Delta x_{12}+2\pi b\Delta x_{23}}{\varphi_0}\Bigr)^3\Bigr)
+\end{align*}
+Using the characteristic phase:
+\begin{align*}
+\varphi&=\frac{\Phi_1+(\Phi_1+2\pi b\Delta x_{12})+(\Phi_1+2\pi b\Delta x_{12}+2\pi b\Delta x_{23})}{3}
+=\frac{3\Phi_1+4\pi b\Delta x_{12}+2\pi b\Delta x_{23}}{3}\\
+&=\frac{3\Phi_1+6\pi b(0.5)}{3}=\Phi_1+\pi b
+\qquad\Longrightarrow\qquad \boxed{\Phi_1=\varphi-\pi b}
+\end{align*}
+So $\Phi_1=\varphi-\pi b$, $\Phi_2=\varphi-\pi b+2\pi b(0.5)=\varphi$, $\Phi_3=\varphi-\pi b+2\pi b(0.5)+2\pi b(0.5)=\varphi+\pi b$, and
+\begin{align*}
+\frac{I}{I_0}&=\Bigl(\frac{\varphi-\pi b}{\varphi_0}-\Bigl(\frac{\varphi-\pi b}{\varphi_0}\Bigr)^3\Bigr)+\Bigl(\frac{\varphi}{\varphi_0}-\Bigl(\frac{\varphi}{\varphi_0}\Bigr)^3\Bigr)+\Bigl(\frac{\varphi+\pi b}{\varphi_0}-\Bigl(\frac{\varphi+\pi b}{\varphi_0}\Bigr)^3\Bigr)\\
+&=\frac{3\varphi}{\varphi_0}-\Bigl(\Bigl(\frac{\varphi-\pi b}{\varphi_0}\Bigr)^3+\Bigl(\frac{\varphi}{\varphi_0}\Bigr)^3+\Bigl(\frac{\varphi+\pi b}{\varphi_0}\Bigr)^3\Bigr)\\
+&=\frac{3\varphi}{\varphi_0}-\Bigl(\frac{\varphi^3-3\varphi^2\pi b+3\varphi\pi^2b^2-\pi^3b^3}{\varphi_0^3}+\frac{\varphi^3}{\varphi_0^3}+\frac{\varphi^3+3\varphi^2\pi b+3\varphi\pi^2b^2+\pi^3b^3}{\varphi_0^3}\Bigr)\\
+&=\frac{3\varphi}{\varphi_0}-\frac{3\varphi^3+6\varphi\pi^2b^2}{\varphi_0^3}
+=\frac{3\varphi}{\varphi_0}\cdot\frac{\varphi_0^2}{\varphi_0^2}-\frac{3\varphi^3+6\varphi\pi^2b^2}{\varphi_0^3}
+=\frac{3\varphi\varphi_0^2-3\varphi^3-6\varphi\pi^2b^2}{\varphi_0^3}
+\end{align*}
+\begin{resbox}
+\[
+\frac{I(\varphi)}{I_0}=\frac{3\varphi\,(\varphi_0^2-\varphi^2-2\pi^2b^2)}{\varphi_0^3}
+\]
+\end{resbox}
+\begin{notebox}{Note}
+In the first boxed line of the notes the bracket reads $\varphi_0^2-\varphi^2-2\varphi\pi^2b^2$; the extra $\varphi$ is a slip, since $3\varphi$ has already been factored out. The second box (above) is the correct one.
+\end{notebox}
+
+\section{The kinetic energy term of the Hamiltonian}
+$\hat H=T+U$. The kinetic energy depends on the charge $Q$ and the capacitance $C$:
+\[
+T=\frac{Q^2}{2C},\qquad Q=2e\hat N,\qquad T=\frac{4e^2\hat N^2}{2C},\qquad [\hat\varphi,\hat N]=i .
+\]
+With $\hat N=-i\partial_\varphi$ (so $\hat N^2=(-i\partial_\varphi)^2=-\partial_\varphi^2$) and $E_C=\frac{e^2}{2C}$:
+\[
+\boxed{T=-4E_C\,\partial_\varphi^2}
+\]
+\textbf{Convincing myself that $[\hat\varphi,\hat N]=i$ holds.}
+\begin{itemize}[leftmargin=*]
+\item $T$ depends on $Q$ and $C$, which do not change with 3 nanowires.
+\item $Q=2eN$: this also does not change for 3 nanowires, because Cooper pairs still have charge $2e$ and $N$ counts the number of Cooper pairs.
+\item When we write $N=-i\partial_\varphi$ we use $[\hat\varphi,\hat N]=i$, but our $\varphi$ has changed and will keep changing as we add more nanowires.
+\end{itemize}
+2 nanowires: $\varphi=\frac{\Phi_1+\Phi_2}{2}$, so $\frac{d}{dt}\bigl(\frac{\Phi_1+\Phi_2}{2}\bigr)=\frac12(\dot\Phi_1+\dot\Phi_2)=\dot\Phi_1$.\\
+3 nanowires: $\varphi=\frac{\Phi_1+\Phi_2+\Phi_3}{3}$, so $\frac{d}{dt}\bigl(\frac{\Phi_1+\Phi_2+\Phi_3}{3}\bigr)=\frac13(\dot\Phi_1+\dot\Phi_2+\dot\Phi_3)=\dot\Phi_1$,
+because the differences between the phases are fixed by the field. Then
+\[
+V(t)=\frac{\hbar}{2e}\frac{d\varphi}{dt},\qquad Q=CV,\qquad Q=2eN .
+\]
+The voltage is immune to the number of wires: each wire is clamped to the same voltage by one capacitor and one electrode pair, so all the phases are changed by the same amount. Therefore, no matter how many wires we add, $[\hat\varphi,\hat N]=i$ is unaffected and
+\[
+\boxed{T=-4E_C\,\partial_\varphi^2}
+\]
+
+\section{The potential energy term}
+Following the same procedure as for the 2-nanowire Hamiltonian, with $V=\frac{\hbar}{2e}\frac{d\varphi}{dt}$ (AC Josephson relation) and $P=IV$:
+\[
+U(\varphi)=\int P\,dt=\int IV\,dt=\int I\,\frac{\hbar}{2e}\frac{d\varphi}{dt}\,dt=\frac{\hbar}{2e}\int_0^{\varphi}I(\varphi')\,d\varphi' .
+\]
+For the 2 nanowires we defined constants $A$ and $D$; we do the same here:
+\begin{align*}
+\frac{I}{I_0}&=\frac{3\varphi}{\varphi_0}-\frac{3\varphi^3+6\varphi\pi^2b^2}{\varphi_0^3}
+=\frac{3\varphi\varphi_0^2}{\varphi_0^3}-\frac{3\varphi^3}{\varphi_0^3}-\frac{6\varphi\pi^2b^2}{\varphi_0^3}
+=\underbrace{\frac{3\varphi_0^2-6\pi^2b^2}{\varphi_0^3}}_{A}\varphi-\underbrace{\frac{3}{\varphi_0^3}}_{D}\varphi^3 ,
+\end{align*}
+so $\frac{I(\varphi)}{I_0}=A\varphi-D\varphi^3$ and $I(\varphi)=(A\varphi-D\varphi^3)I_0$. Now that we have regrouped we can solve the integral:
+\[
+U(\varphi)=\frac{\hbar}{2e}\int_0^{\varphi}(A\varphi'-D\varphi'^3)I_0\,d\varphi'=\frac{\hbar I_0}{2e}\Bigl(\frac{A\varphi^2}{2}-\frac{D\varphi^4}{4}\Bigr).
+\]
+\begin{resbox}
+\[
+U(\varphi)=\frac{\hbar I_0}{2e}\Bigl(\frac{A\varphi^2}{2}-\frac{D\varphi^4}{4}\Bigr),\qquad A=\frac{3\varphi_0^2-6\pi^2b^2}{\varphi_0^3}=\frac{3(\varphi_0^2-2\pi^2b^2)}{\varphi_0^3},\qquad D=\frac{3}{\varphi_0^3}
+\]
+\end{resbox}
+
+\section{Total Hamiltonian}
+\begin{resbox}
+\[
+\hat H=-4E_C\,\partial_\varphi^2+\frac{\hbar I_0}{2e}\Bigl(\frac{A\varphi^2}{2}-\frac{D\varphi^4}{4}\Bigr),\qquad
+A=\frac{3\varphi_0^2-6\pi^2b^2}{\varphi_0^3},\qquad D=\frac{3}{\varphi_0^3}
+\]
+\end{resbox}
+\begin{paritybox}{: $N=2$ comparison}
+For two wires at $\mp\tfrac12$ the same steps give $\Phi_{1,2}=\varphi\mp\pi b$ and $A=\frac{2\varphi_0^2-6\pi^2b^2}{\varphi_0^3}$, $D=\frac{2}{\varphi_0^3}$ (Dayem loop paper). Adding the middle wire adds $\varphi_0^2/\varphi_0^3$ to $A$ and $1/\varphi_0^3$ to $D$, because the middle wire has $\Phi_2=\varphi$ and carries no field shift. \checkmark
+\end{paritybox}
+
+\end{document}

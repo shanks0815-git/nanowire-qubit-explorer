@@ -1,0 +1,128 @@
+%% New Hamiltonian Using the Realistic $2m{+}1$ CPR (3 Nanowires, Symmetric)
+%% Author: Shashank Satish. Typed from the handwritten notes. Compile with pdfLaTeX (Overleaf default).
+\documentclass[10pt]{article}
+\usepackage[letterpaper,margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!50!black,bookmarks=false]{hyperref}
+\numberwithin{equation}{section}
+\allowdisplaybreaks[1]
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\newtcolorbox{resbox}{enhanced,breakable,fontupper=\small,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{paritybox}[1]{enhanced,breakable,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,fonttitle=\bfseries,colbacktitle=white,coltitle=black,titlerule=0.4pt,title={Parity check #1},left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{notebox}[1]{enhanced,breakable,colback=gray!7,colframe=gray!60,boxrule=0.5pt,arc=2pt,fonttitle=\bfseries,title={#1},left=6pt,right=6pt}
+% device sketch: \device{list of x positions in [0,6]}{labels}
+\newcommand{\device}[2]{%
+\begin{tikzpicture}[thick,scale=0.9]
+ \fill[gray!35] (-0.5,3.0) rectangle (6.5,3.4); \draw (-0.5,3.0) rectangle (6.5,3.4);
+ \fill[gray!35] (-0.5,-0.4) rectangle (6.5,0); \draw (-0.5,-0.4) rectangle (6.5,0);
+ \foreach \xx/\lab in {#1}{\draw[line width=1.6pt] (\xx,0) -- (\xx,3.0); \node[below] at (\xx,-0.4) {\small$\lab$};}
+ #2
+\end{tikzpicture}}
+\author{Shashank Satish}
+\date{\today}
+\title{New Hamiltonian Using the Realistic $2m{+}1$ CPR (3 Nanowires, Symmetric)}
+\begin{document}
+\maketitle
+\section{Realistic nanowire CPR models}
+\[
+\frac{I(\Phi)}{I_0}=\frac{\Phi}{\varphi_0}-a\Bigl(\frac{\Phi}{\varphi_0}\Bigr)^{2m+1}
+\]
+\begin{itemize}[leftmargin=*]
+\item The CPR that was used before (Likharev) was valid at temperatures near the critical temperature, or for short nanowires.
+\item Transmon qubits operate near absolute zero temperature; this is where the CPR can deviate severely from the cubic term.
+\end{itemize}
+Here $a$ is a dimensionless constant (it defines the strength of the nonlinearity) and $m$ is a positive integer. For $a=1$, $m=1$ this is the Likharev CPR.
+
+\section{Geometry of the device}
+\begin{figure}[H]\centering
+\device{0/x_1=-0.5,3/x_2=0,6/x_3=0.5}{\node at (0,3.75){$\Phi_1$}; \node at (3,3.75){$\Phi_2$}; \node at (6,3.75){$\Phi_3$};}
+\end{figure}
+\[
+\Delta x_{12}=x_2-x_1=0.5,\qquad \Delta x_{23}=x_3-x_2=0.5,\qquad \Delta x_{13}=x_3-x_1=0.5-(-0.5)=1 .
+\]
+We assume that the second wire is in the middle, equidistant from the end wires ($x_2=0$).
+
+Meissner phase equations: $\Phi_2=\Phi_1+2\pi b\Delta x_{12}$, $\Phi_3=\Phi_2+2\pi b\Delta x_{23}$. Characteristic phase: $\varphi=\frac{\Phi_1+\Phi_2+\Phi_3}{3}$.
+
+\section{The 2m+1 CPR in terms of the characteristic phase}
+Adding up all the currents using the current sum and the realistic CPR:
+\begin{align*}
+\frac{I}{I_0}&=\Bigl[\frac{\Phi_1}{\varphi_0}-a\Bigl(\frac{\Phi_1}{\varphi_0}\Bigr)^{2m+1}\Bigr]+\Bigl[\frac{\Phi_2}{\varphi_0}-a\Bigl(\frac{\Phi_2}{\varphi_0}\Bigr)^{2m+1}\Bigr]+\Bigl[\frac{\Phi_3}{\varphi_0}-a\Bigl(\frac{\Phi_3}{\varphi_0}\Bigr)^{2m+1}\Bigr]\\
+&=\frac{\Phi_1+\Phi_2+\Phi_3}{\varphi_0}-a\Bigl[\Bigl(\frac{\Phi_1}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\Phi_2}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\Phi_3}{\varphi_0}\Bigr)^{2m+1}\Bigr].
+\end{align*}
+Next apply the Meissner phase equations, $\Phi_2=\Phi_1+2\pi b\Delta x_{12}$ and
+$\Phi_3=\Phi_1+2\pi b\Delta x_{12}+2\pi b\Delta x_{23}=\Phi_1+2\pi b$:
+\begin{align*}
+\frac{I}{I_0}&=\frac{\Phi_1+\Phi_1+2\pi b\Delta x_{12}+\Phi_1+2\pi b}{\varphi_0}-a\Bigl[\Bigl(\frac{\Phi_1}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\Phi_1+2\pi b\Delta x_{12}}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\Phi_1+2\pi b}{\varphi_0}\Bigr)^{2m+1}\Bigr]\\
+&=\frac{3\Phi_1+3\pi b}{\varphi_0}-a\Bigl[\Bigl(\frac{\Phi_1}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\Phi_1+2\pi b\Delta x_{12}}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\Phi_1+2\pi b}{\varphi_0}\Bigr)^{2m+1}\Bigr].
+\end{align*}
+The characteristic phase gives, as before,
+\[
+\varphi=\frac{\Phi_1+\Phi_1+2\pi b\Delta x_{12}+\Phi_1+2\pi b\Delta x_{12}+2\pi b\Delta x_{23}}{3}=\frac{3\Phi_1+4\pi b\Delta x_{12}+2\pi b\Delta x_{23}}{3}=\frac{3\Phi_1+6\pi b(0.5)}{3}=\Phi_1+\pi b,
+\]
+so $\Phi_1=\varphi-\pi b$. Plugging in:
+\begin{align*}
+\frac{I}{I_0}&=\frac{3(\varphi-\pi b)+3\pi b}{\varphi_0}-a\Bigl[\Bigl(\frac{\varphi-\pi b}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\varphi-\pi b+2\pi b\Delta x_{12}}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\varphi-\pi b+2\pi b}{\varphi_0}\Bigr)^{2m+1}\Bigr]\\
+&=\frac{3\varphi}{\varphi_0}-a\Bigl[\Bigl(\frac{\varphi-\pi b}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\varphi}{\varphi_0}\Bigr)^{2m+1}+\Bigl(\frac{\varphi+\pi b}{\varphi_0}\Bigr)^{2m+1}\Bigr].
+\end{align*}
+
+\section{Using the binomial theorem}
+\[
+(x+y)^n=\sum_{k=0}^{n}\binom{n}{k}x^{n-k}y^k,\qquad \binom{n}{k}=\frac{n!}{k!\,(n-k)!}
+\]
+\begin{align*}
+(\varphi-\pi b)^{2m+1}&=\sum_{k=0}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}(-\pi b)^k=\sum_{k=0}^{2m+1}\frac{(2m+1)!}{k!\,(2m+1-k)!}\varphi^{2m+1-k}(-\pi b)^k\\
+(\varphi+\pi b)^{2m+1}&=\sum_{k=0}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}(\pi b)^k=\sum_{k=0}^{2m+1}\frac{(2m+1)!}{k!\,(2m+1-k)!}\varphi^{2m+1-k}(\pi b)^k
+\end{align*}
+Adding up these terms:
+\begin{align*}
+(\varphi-\pi b)^{2m+1}+(\varphi+\pi b)^{2m+1}&=\sum_{k=0}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}\bigl[(-\pi b)^k+(\pi b)^k\bigr]\\
+&=\sum_{k=0}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}(\pi b)^k\bigl[(-1)^k+1\bigr].
+\end{align*}
+Odd terms just cancel: $-1+1=0$. Even terms just add up: $1+1=2$. So
+\[
+(\varphi-\pi b)^{2m+1}+(\varphi+\pi b)^{2m+1}=2\sum_{\substack{k=0\\k\ \text{even}}}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}(\pi b)^k .
+\]
+Back to the original equation (the $k=0$ term of the sum, $2\varphi^{2m+1}$, is combined with the middle wire's $\varphi^{2m+1}$):
+\begin{align*}
+\frac{I}{I_0}&=\frac{3\varphi}{\varphi_0}-a\Biggl[\frac{2\sum_{k\ \text{even}}\binom{2m+1}{k}\varphi^{2m+1-k}(\pi b)^k}{\varphi_0^{2m+1}}+\frac{\varphi^{2m+1}}{\varphi_0^{2m+1}}\Biggr]
+\end{align*}
+\begin{resbox}
+\[
+\frac{I(\varphi)}{I_0}=\frac{3\varphi}{\varphi_0}-a\Biggl[\frac{3\varphi^{2m+1}+2\displaystyle\sum_{\substack{k=2\\k\ \text{even}}}^{2m}\binom{2m+1}{k}\varphi^{2m+1-k}(\pi b)^k}{\varphi_0^{2m+1}}\Biggr]
+\]
+\end{resbox}
+\begin{paritybox}{: cubic case $m=1$}
+For $m=1$ only $k=2$ survives in the sum: $\binom{3}{2}\varphi(\pi b)^2=3\varphi(\pi b)^2$, so
+\[
+\frac{I}{I_0}=\frac{3\varphi}{\varphi_0}-a\Bigl[\frac{3\varphi^3+2\bigl(3\varphi(\pi b)^2\bigr)}{\varphi_0^3}\Bigr]=\frac{3\varphi}{\varphi_0}-a\Bigl[\frac{3\varphi^3+6\varphi(\pi b)^2}{\varphi_0^3}\Bigr],
+\]
+which for $a=1$ is the symmetric 3-nanowire Likharev result. \checkmark
+\end{paritybox}
+
+\section{The Hamiltonian}
+\textbf{Kinetic term} (unchanged by the CPR): $T=\frac{Q^2}{2C}$, $Q=2e\hat N$, $T=\frac{4e^2\hat N^2}{2C}$, $[\hat\varphi,\hat N]=i$, $\hat N=-i\partial_\varphi$, $E_C=\frac{e^2}{2C}$, so
+\[
+\boxed{T=-4E_C\,\partial_\varphi^2}
+\]
+\textbf{Potential term.} With $V=\frac{\hbar}{2e}\frac{d\varphi}{dt}$ and $P=IV$:
+\[
+U(\varphi)=\int P\,dt=\int IV\,dt=\int I\,\frac{\hbar}{2e}\frac{d\varphi}{dt}\,dt=\frac{\hbar}{2e}\int_0^{\varphi}I(\varphi')\,d\varphi'
+\]
+\begin{align*}
+U(\varphi)&=\frac{\hbar I_0}{2e}\int_0^{\varphi}\Biggl[\frac{3\varphi'}{\varphi_0}-\frac{a}{\varphi_0^{2m+1}}\Bigl(3\varphi'^{2m+1}+2\sum_{\substack{k=2\\k\ \text{even}}}^{2m}\binom{2m+1}{k}\varphi'^{2m+1-k}(\pi b)^k\Bigr)\Biggr]d\varphi'\\
+&=\frac{\hbar I_0}{2e}\Biggl[\frac{3\varphi^2}{2\varphi_0}-\frac{a}{\varphi_0^{2m+1}}\Bigl(\frac{3\varphi^{2m+2}}{2(m+1)}+2\sum_{\substack{k=2\\k\ \text{even}}}^{2m}\binom{2m+1}{k}(\pi b)^k\,\frac{\varphi^{2m+2-k}}{2m+2-k}\Bigr)\Biggr]
+\end{align*}
+\begin{resbox}
+\[
+\hat H=-4E_C\,\partial_\varphi^2+\frac{\hbar I_0}{2e}\Biggl[\frac{3\varphi^2}{2\varphi_0}-\frac{a}{\varphi_0^{2m+1}}\Bigl(\frac{3\varphi^{2m+2}}{2(m+1)}+2\sum_{\substack{k=2\\k\ \text{even}}}^{2m}\binom{2m+1}{k}(\pi b)^k\,\frac{\varphi^{2m+2-k}}{2m+2-k}\Bigr)\Biggr]
+\]
+\end{resbox}
+
+\end{document}

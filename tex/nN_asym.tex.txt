@@ -1,0 +1,157 @@
+%% The $N$-Nanowire Hamiltonian, Asymmetric Wire Positions
+%% Author: Shashank Satish. Typed from the handwritten notes. Compile with pdfLaTeX (Overleaf default).
+\documentclass[10pt]{article}
+\usepackage[letterpaper,margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!50!black,bookmarks=false]{hyperref}
+\numberwithin{equation}{section}
+\allowdisplaybreaks[1]
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\newtcolorbox{resbox}{enhanced,breakable,fontupper=\small,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{paritybox}[1]{enhanced,breakable,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,fonttitle=\bfseries,colbacktitle=white,coltitle=black,titlerule=0.4pt,title={Parity check #1},left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{notebox}[1]{enhanced,breakable,colback=gray!7,colframe=gray!60,boxrule=0.5pt,arc=2pt,fonttitle=\bfseries,title={#1},left=6pt,right=6pt}
+% device sketch: \device{list of x positions in [0,6]}{labels}
+\newcommand{\device}[2]{%
+\begin{tikzpicture}[thick,scale=0.9]
+ \fill[gray!35] (-0.5,3.0) rectangle (6.5,3.4); \draw (-0.5,3.0) rectangle (6.5,3.4);
+ \fill[gray!35] (-0.5,-0.4) rectangle (6.5,0); \draw (-0.5,-0.4) rectangle (6.5,0);
+ \foreach \xx/\lab in {#1}{\draw[line width=1.6pt] (\xx,0) -- (\xx,3.0); \node[below] at (\xx,-0.4) {\small$\lab$};}
+ #2
+\end{tikzpicture}}
+\author{Shashank Satish}
+\date{\today}
+\title{The $N$-Nanowire Hamiltonian, Asymmetric Wire Positions}
+\begin{document}
+\maketitle
+We will now look at the asymmetrical case for the $N$-nanowire device. For the 3-nanowire model, $x_2=0$ (middle wire) was symmetrical and any other value made the model asymmetrical: there was only one dependent variable. Now we have multiple variables to control.
+
+\section{Geometry of the device}
+\begin{figure}[H]\centering
+\device{0/x_1=-0.5,1.1/x_2,2.0/x_3,4.4/x_{N-1},6/x_N=0.5}{\node at (3.2,1.5){$\cdots$};}
+\caption{$N$ wires; the end wires are fixed at $x_1=-0.5$ and $x_N=0.5$, the wires in between are now at arbitrary (asymmetric) positions.}
+\end{figure}
+We do not know the spacings: $\Delta x_{i,i+1}=x_{i+1}-x_i$.
+
+\textbf{Meissner phase equation.}
+\[
+\Phi_i=\Phi_1+2\pi b\sum_{k=1}^{i-1}\Delta x_{k,k+1}=\Phi_1+2\pi b(x_i-x_1)=\Phi_1+2\pi b\bigl(x_i-(-0.5)\bigr)
+\qquad\Longrightarrow\qquad
+\boxed{\Phi_i=\Phi_1+2\pi b(x_i+0.5)}
+\]
+(the sum of the gaps telescopes to $x_i-x_1$).
+
+\section{Characteristic equation}
+\[
+\varphi=\frac{\Phi_1+\dots+\Phi_N}{N}=\frac{\sum_{i=1}^{N}\Phi_i}{N}=\frac{\Phi_1+\sum_{i=2}^{N}\Phi_i}{N}
+\qquad\Longrightarrow\qquad N\varphi=\Phi_1+\sum_{i=2}^{N}\Phi_i .
+\]
+Plug in $\Phi_i=\Phi_1+2\pi b(x_i+0.5)$:
+\begin{align*}
+N\varphi&=\Phi_1+\sum_{i=2}^{N}\bigl(\Phi_1+2\pi b(x_i+0.5)\bigr)=\Phi_1+\sum_{i=2}^{N}\Phi_1+\sum_{i=2}^{N}2\pi bx_i+\sum_{i=2}^{N}\pi b\\
+N\varphi&=\Phi_1+(N-1)\Phi_1+2\pi b\sum_{i=2}^{N}x_i+(N-1)\pi b\\
+N\varphi&=\Phi_1+(N-1)\Phi_1+2\pi b\Bigl[\sum_{i=1}^{N}x_i-x_1\Bigr]+(N-1)\pi b
+=\Phi_1+(N-1)\Phi_1+2\pi b\Bigl(\sum_{i=1}^{N}x_i+0.5\Bigr)+(N-1)\pi b\\
+N\varphi&=\Phi_1+N\Phi_1-\Phi_1+2\pi b\sum_{i=1}^{N}x_i+\pi b+N\pi b-\pi b
+\quad\Longrightarrow\quad N\varphi=N\Phi_1+N\pi b+2\pi b\sum_{i=1}^{N}x_i\\
+\varphi&=\Phi_1+\pi b+\frac{2\pi b}{N}\sum_{i=1}^{N}x_i
+\end{align*}
+\[
+\Phi_1=\varphi-\pi b-2\pi b\,\underbrace{\frac1N\sum_{i=1}^{N}x_i}_{\bar x}
+\qquad\Longrightarrow\qquad
+\boxed{\Phi_1=\varphi-\pi b-2\pi b\,\bar x}
+\]
+where $\bar x=\frac1N\sum_{i=1}^{N}x_i$ is the average position of all the wires.
+
+\section{$\Phi_i$ in terms of the characteristic phase}
+We substitute $\Phi_1=\varphi-\pi b-2\pi b\bar x$ into $\Phi_i=\Phi_1+2\pi b(x_i+0.5)$:
+\[
+\Phi_i=\varphi-\pi b-2\pi b\bar x+2\pi bx_i+\pi b=\varphi-2\pi b\bar x+2\pi bx_i
+\qquad\Longrightarrow\qquad
+\boxed{\Phi_i=\varphi+2\pi b(x_i-\bar x)}
+\]
+
+\section{Plugging into the Likharev CPR}
+\[
+\frac{I}{I_0}=\sum_{i=1}^{N}\Bigl[\frac{\Phi_i}{\varphi_0}-\Bigl(\frac{\Phi_i}{\varphi_0}\Bigr)^3\Bigr]
+=\sum_{i=1}^{N}\Bigl[\frac{\varphi+2\pi bx_i-2\pi b\bar x}{\varphi_0}-\Bigl(\frac{\varphi+2\pi bx_i-2\pi b\bar x}{\varphi_0}\Bigr)^3\Bigr]
+\]
+\textbf{The cubic term.} Expanding $(\varphi+2\pi bx_i-2\pi b\bar x)^3$ and collecting:
+\begin{align*}
+(\varphi+2\pi bx_i-2\pi b\bar x)^3=\ &\varphi^3+8\pi^3b^3x_i^3-8\pi^3b^3\bar x^3+6\pi bx_i\varphi^2-12\pi^2b^2x_i\bar x\varphi-6\pi b\bar x\varphi^2+12\pi^2b^2\bar x^2\varphi\\
+&+12\pi^2b^2x_i^2\varphi-24\pi^3b^3x_i^2\bar x-12\pi^2b^2x_i\bar x\varphi+24\pi^3b^3x_i\bar x^2\\
+=\ &\varphi^3+8\pi^3b^3\bigl(x_i^3-\bar x^3-3x_i^2\bar x+3x_i\bar x^2\bigr)+6\pi b\varphi^2(x_i-\bar x)+12\pi^2b^2\varphi\bigl(x_i^2+\bar x^2-2x_i\bar x\bigr)\\
+=\ &\varphi^3+8\pi^3b^3(x_i-\bar x)^3+6\pi b\varphi^2(x_i-\bar x)+12\pi^2b^2\varphi(x_i-\bar x)^2
+\end{align*}
+so
+\[
+\frac{I}{I_0}=\sum_{i=1}^{N}\frac{\varphi_0^2(\varphi+2\pi bx_i-2\pi b\bar x)-\varphi^3-8\pi^3b^3(x_i-\bar x)^3-6\pi b\varphi^2(x_i-\bar x)-12\pi^2b^2\varphi(x_i-\bar x)^2}{\varphi_0^3}.
+\]
+We sum the five pieces one by one.
+\begin{enumerate}[label=\arabic*.),leftmargin=*]
+\item $\displaystyle\sum_{i=1}^{N}\frac{\varphi_0^2(\varphi+2\pi bx_i-2\pi b\bar x)}{\varphi_0^3}=\frac{N\varphi_0^2\varphi+\varphi_0^22\pi b\sum_ix_i-N2\pi b\bar x\,\varphi_0^2}{\varphi_0^3}$. We know $\bar x=\frac1N\sum_ix_i$, so $N2\pi b\bar x=2\pi b\sum_ix_i$ and the last two cancel: $\displaystyle\frac{N\varphi_0^2\varphi}{\varphi_0^3}=\frac{N\varphi}{\varphi_0}$.
+\item $\displaystyle\sum_{i=1}^{N}\Bigl(-\frac{\varphi^3}{\varphi_0^3}\Bigr)=N\Bigl(-\frac{\varphi^3}{\varphi_0^3}\Bigr)$.
+\item $\displaystyle\sum_{i=1}^{N}\Bigl(-\frac{8\pi^3b^3(x_i-\bar x)^3}{\varphi_0^3}\Bigr)=-\frac{8\pi^3b^3}{\varphi_0^3}\sum_{i=1}^{N}\bigl(x_i^3-\bar x^3-3x_i^2\bar x+3x_i\bar x^2\bigr)$, and
+\[
+\sum_{i=1}^{N}x_i^3-\sum_{i=1}^{N}\bar x^3-\sum_{i=1}^{N}3x_i^2\bar x+\sum_{i=1}^{N}3x_i\bar x^2=\sum_ix_i^3-N\bar x^3-3\bar x\sum_ix_i^2+3N\bar x^3=\sum_ix_i^3-3\bar x\sum_ix_i^2+2N\bar x^3,
+\]
+giving $\displaystyle-\frac{8\pi^3b^3}{\varphi_0^3}\Bigl[\sum_{i=1}^{N}x_i^3-3\bar x\sum_ix_i^2+2N\bar x^3\Bigr]$.
+\item $\displaystyle\sum_{i=1}^{N}\Bigl(-\frac{6\pi b\varphi^2(x_i-\bar x)}{\varphi_0^3}\Bigr)=-\frac{6\pi b\varphi^2}{\varphi_0^3}\sum_{i=1}^{N}(x_i-\bar x)=0$.
+\item $\displaystyle\sum_{i=1}^{N}\Bigl(-\frac{12\pi^2b^2\varphi(x_i-\bar x)^2}{\varphi_0^3}\Bigr)=-\frac{12\pi^2b^2\varphi}{\varphi_0^3}\sum_{i=1}^{N}(x_i^2-2x_i\bar x+\bar x^2)$, and
+$\sum_i(x_i^2-2x_i\bar x+\bar x^2)=\sum_ix_i^2-2N\bar x^2+N\bar x^2=\sum_ix_i^2-N\bar x^2$.
+\end{enumerate}
+\begin{resbox}
+\[
+\frac{I}{I_0}=\frac{N\varphi}{\varphi_0}-\frac{N\varphi^3}{\varphi_0^3}-\frac{8\pi^3b^3}{\varphi_0^3}\Bigl[\sum_{i=1}^{N}x_i^3-3\bar x\sum_{i=1}^{N}x_i^2+2N\bar x^3\Bigr]-\frac{12\pi^2b^2\varphi}{\varphi_0^3}\Bigl(\sum_{i=1}^{N}x_i^2-N\bar x^2\Bigr)
+\]
+\end{resbox}
+\begin{paritybox}{: the symmetric case from the asymmetric case}
+In the symmetric case $\sum_ix_i=0$ (so $\bar x=0$), $\sum_ix_i^3=0$ and $\sum_ix_i^2=\frac{N(N+1)}{12(N-1)}$:
+\begin{align*}
+\frac{I}{I_0}&=\frac{N\varphi}{\varphi_0}-\frac{N\varphi^3}{\varphi_0^3}-\frac{8\pi^3b^3}{\varphi_0^3}\bigl[0-0+0\bigr]-\frac{12\pi^2b^2\varphi}{\varphi_0^3}\Bigl(\frac{N(N+1)}{12(N-1)}-0\Bigr)
+=\frac{N\varphi}{\varphi_0}-\frac{N\varphi^3}{\varphi_0^3}-\frac{\pi^2b^2\varphi N(N+1)}{\varphi_0^3(N-1)}\\
+&=\frac{N}{\varphi_0^3}\Bigl[\Bigl(\varphi_0^2-\frac{(N+1)\pi^2b^2}{N-1}\Bigr)\varphi-\varphi^3\Bigr],
+\end{align*}
+which matches what we did in the symmetric case: $A=\frac{N}{\varphi_0^3}\bigl(\varphi_0^2-\frac{(N+1)\pi^2b^2}{N-1}\bigr)$, $D=\frac{N}{\varphi_0^3}$. \checkmark
+\end{paritybox}
+
+\section{Getting the Hamiltonian}
+The kinetic term remains unaffected: $\frac{Q^2}{2C}=\frac{(2en)^2}{2C}=4E_Cn^2$ with $E_C=\frac{e^2}{2C}$, i.e.\ $KE=-4E_C\,\partial_\varphi^2$.
+
+\textbf{Deriving the potential function} (integrate the CPR). With $V=\frac{\hbar}{2e}\frac{d\varphi}{dt}$, $P=IV$:
+\[
+U(\varphi)=\int P\,dt=\int IV\,dt=\int I\Bigl(\frac{\hbar}{2e}\frac{d\varphi}{dt}\Bigr)dt=\frac{\hbar I_0}{2e}\int_0^\varphi\Bigl(\sum_i\frac{I_i}{I_0}\Bigr)d\varphi' .
+\]
+We have been following the same naming convention $A$, $D$, $R$: $A$ collects the terms with $\varphi^1$, $D$ the terms with $\varphi^3$, $R$ the terms with no $\varphi$:
+\begin{align*}
+\frac{N\varphi}{\varphi_0}-\frac{12\pi^2b^2\varphi}{\varphi_0^3}\Bigl(\sum_ix_i^2-N\bar x^2\Bigr)&=\varphi\underbrace{\Bigl(\frac{N}{\varphi_0}-\frac{12\pi^2b^2}{\varphi_0^3}\Bigl(\sum_{i=1}^{N}x_i^2-N\bar x^2\Bigr)\Bigr)}_{A}\\
+-\frac{N\varphi^3}{\varphi_0^3}&=-\varphi^3\underbrace{\Bigl(\frac{N}{\varphi_0^3}\Bigr)}_{D},\qquad
+R=+\frac{8\pi^3b^3}{\varphi_0^3}\Bigl[\sum_{i=1}^{N}x_i^3-3\bar x\sum_ix_i^2+2N\bar x^3\Bigr]
+\end{align*}
+Replace and compute the integral:
+\[
+U(\varphi)=\frac{\hbar I_0}{2e}\int_0^\varphi(A\varphi'-D\varphi'^3-R)\,d\varphi'=\frac{\hbar I_0}{2e}\Bigl(\frac{A\varphi^2}{2}-\frac{D\varphi^4}{4}-R\varphi\Bigr).
+\]
+Now we substitute $A$, $D$ and $R$ and plug $U(\varphi)$ into the Hamiltonian:
+\begin{resbox}
+\[
+\hat H=-4E_C\,\partial_\varphi^2+\frac{\hbar I_0}{2e}\Biggl(\frac{\frac{N}{\varphi_0}-\frac{12\pi^2b^2}{\varphi_0^3}\bigl(\sum_{i=1}^{N}x_i^2-N\bar x^2\bigr)}{2}\varphi^2-\frac{N}{4\varphi_0^3}\varphi^4-\frac{8\pi^3b^3}{\varphi_0^3}\Bigl[\sum_{i=1}^{N}x_i^3-3\bar x\sum_ix_i^2+2N\bar x^3\Bigr]\varphi\Biggr)
+\]
+\end{resbox}
+\begin{notebox}{Note on a sign}
+In the boxed Hamiltonian of the notes the potential enters as $-\frac{\hbar I_0}{2e}(\dots)$. The sign must be $+$ (the current is $+\frac{2e}{\hbar}\,\partial U/\partial\varphi$, and the well at $\varphi\approx0$ needs positive curvature), as in every other derivation; it is written with $+$ here.
+\end{notebox}
+\begin{paritybox}{: the symmetric Hamiltonian}
+For the symmetric case $\bar x=0$ and $\sum_ix_i^3=0$, so there is no $R$ term, and with $\sum_ix_i^2=\frac{N(N+1)}{12(N-1)}$:
+\[
+\hat H=-4E_C\,\partial_\varphi^2+\frac{\hbar I_0}{2e}\Bigl[\frac{N}{2\varphi_0^3}\Bigl(\varphi_0^2-\frac{(N+1)\pi^2b^2}{N-1}\Bigr)\varphi^2-\frac{N}{4\varphi_0^3}\varphi^4\Bigr],
+\]
+the same as the symmetric $N$-nanowire Hamiltonian. \checkmark
+\end{paritybox}
+
+\end{document}

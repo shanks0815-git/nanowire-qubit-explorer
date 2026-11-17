@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N-Nanowire Dayem Loop Qubit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' }, startup: { typeset: false } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<style>
+:root{
+  --ink:#1b1d22; --ink2:#4a4e57; --ink3:#7b7f88; --rule:#dcdad3; --paper:#f7f6f2; --card:#ffffff;
+  --blue:#2a78d6; --orange:#eb6834; --aqua:#1baf7a; --grey:#9a9994; --red:#c8412f; --navy:#16325c;
+  --serif:'Source Serif 4',Georgia,serif; --sans:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+a{color:var(--blue)}
+header.top{background:var(--navy);color:#fff;padding:28px 40px 22px}
+header.top .kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+header.top h1{font-family:var(--serif);font-weight:600;font-size:34px;margin:6px 0 6px;line-height:1.15}
+header.top .sub{opacity:.85;max-width:900px}
+nav.tabs{display:flex;gap:4px;background:var(--navy);padding:0 32px;border-top:1px solid rgba(255,255,255,.12);position:sticky;top:0;z-index:20}
+nav.tabs a{color:#cfd8e6;text-decoration:none;padding:11px 16px;font-weight:500;font-size:14px;border-bottom:3px solid transparent}
+nav.tabs a.on{color:#fff;border-bottom-color:#f0a35e}
+main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
+.view{display:none}.view.on{display:block}
+.layout{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:16px 18px;margin-bottom:18px}
+.card h2{font-family:var(--serif);font-weight:600;font-size:20px;margin:0 0 10px}
+.card h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:14px 0 6px;font-weight:600}
+.controls{position:sticky;top:58px;max-height:calc(100vh - 70px);overflow:auto}
+label.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0;font-size:14px}
+.seg{display:flex;border:1px solid var(--rule);border-radius:5px;overflow:hidden;margin:4px 0 8px}
+.seg button{flex:1;white-space:nowrap;border:0;background:#fff;padding:7px 4px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink2)}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button.on{background:var(--navy);color:#fff}
+input[type=range]{width:100%;accent-color:var(--navy)}
+input[type=number],input[type=text]{width:76px;padding:4px 6px;border:1px solid var(--rule);border-radius:4px;font:inherit;font-family:var(--mono);font-size:13px}
+input[type=text].wide{width:100%}
+.mono{font-family:var(--mono)}
+.small{font-size:12.5px;color:var(--ink3)}
+.xrow{display:grid;grid-template-columns:34px 1fr 62px;gap:8px;align-items:center;margin:3px 0;font-size:13px}
+.nrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px}
+.stepper{display:flex;align-items:center;border:1px solid var(--rule);border-radius:4px;overflow:hidden;font-size:13px}
+.stepper span.l{padding:0 6px;color:var(--ink3);font-family:var(--mono);font-size:12px}
+.stepper button{border:0;background:#f1f0ec;width:22px;height:26px;cursor:pointer;font-size:15px}
+.stepper b{flex:1;text-align:center;font-family:var(--mono)}
+.btn{border:1px solid var(--rule);background:#fff;border-radius:4px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.btn:hover{border-color:var(--ink3)}
+.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1200px){.grid2{grid-template-columns:1fr}}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:6px}
+.stat{border:1px solid var(--rule);border-radius:5px;padding:8px 10px;background:#fbfbf9}
+.stat .k{font-size:12px;color:var(--ink3)}
+.stat .v{font-family:var(--mono);font-size:16px;font-weight:500}
+table.t{border-collapse:collapse;width:100%;font-size:13px}
+table.t th,table.t td{border-bottom:1px solid var(--rule);padding:4px 8px;text-align:right;font-family:var(--mono)}
+table.t th{font-family:var(--sans);font-weight:600;color:var(--ink2);text-align:right}
+table.t td:first-child,table.t th:first-child{text-align:left}
+.note{background:#fff8ec;border:1px solid #f1d9ad;border-radius:5px;padding:8px 12px;font-size:13.5px;margin:8px 0}
+.note.info{background:#eef4fc;border-color:#c7dbf5}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:10px;border:1px solid var(--rule);color:var(--ink2);margin:0 4px 4px 0;background:#fff}
+.pill.ok{border-color:#9fd8c2;background:#eefaf5;color:#14724f}
+.pill.no{border-color:#f0c4b8;background:#fdf1ed;color:#a6402a}
+#model svg{width:100%;height:auto;display:block}
+.plot{width:100%;height:420px}
+.plot.short{height:300px}
+.docgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.doc{border:1px solid var(--rule);border-radius:6px;background:#fff;padding:12px 14px;cursor:pointer}
+.doc:hover{border-color:var(--navy)}
+.doc .tt{font-family:var(--serif);font-weight:600;font-size:16.5px;line-height:1.25}
+.doc.rec{border:2px solid var(--orange)}
+.viewer{display:grid;grid-template-columns:1fr;gap:12px}
+.viewer .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.pages{display:flex;flex-direction:column;gap:14px;align-items:center;background:#e9e7e1;border-radius:6px;padding:14px;max-height:1100px;overflow:auto}
+.pages img{max-width:900px;width:100%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.pages.split{display:grid;grid-template-columns:1fr 1fr;align-items:start}
+.pages.split > div{display:flex;flex-direction:column;gap:14px}
+pre.src{max-height:620px;overflow:auto;background:#1e2128;color:#e6e6e6;font-family:var(--mono);font-size:12px;padding:14px;border-radius:6px;white-space:pre-wrap}
+.keyres{border-left:3px solid var(--navy);padding:4px 14px;margin:8px 0;background:#fbfbf9;overflow-x:auto}
+.footer{color:var(--ink3);font-size:12.5px;margin-top:30px;border-top:1px solid var(--rule);padding-top:12px}
+.sectgrid{display:grid;gap:8px}
+.sectgrid .cell{border:1px solid var(--rule);border-radius:4px;background:#fff;padding:4px}
+.sectgrid .cell .cap{font-family:var(--mono);font-size:10.5px;color:var(--ink2);text-align:center;line-height:1.3}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;padding:8px 14px;border-radius:5px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.on{opacity:1}
+
+/* ===== visual upgrade ===== */
+:root{--glow:#5cc8ff;--gold:#f0a35e;--deep:#0a1630}
+html,body{background:radial-gradient(1200px 600px at 85% -10%,#e8eefb 0,transparent 60%),radial-gradient(900px 500px at -10% 30%,#fbefe3 0,transparent 55%),var(--paper);background-attachment:fixed}
+header.top{position:relative;overflow:hidden;padding:44px 48px 34px;background:linear-gradient(120deg,#07122b 0%,#10285a 55%,#1b3f7a 100%)}
+header.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,transparent,var(--glow),var(--gold),transparent)}
+header.top .hero{position:absolute;inset:0;width:100%;height:100%;opacity:.55;pointer-events:none}
+header.top>*:not(.hero){position:relative;z-index:2}
+header.top .kicker{color:var(--glow);opacity:1;font-family:var(--mono);font-size:11.5px}
+header.top h1{font-size:46px;letter-spacing:-.01em;background:linear-gradient(90deg,#fff 30%,#bfe6ff 70%,#ffd9b0);-webkit-background-clip:text;background-clip:text;color:transparent;margin:10px 0 12px}
+header.top .sub{font-size:15.5px;opacity:.9;max-width:860px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.badges span{font-family:var(--mono);font-size:11.5px;color:#d6ecff;border:1px solid rgba(140,200,255,.35);background:rgba(92,200,255,.08);padding:3px 10px;border-radius:20px;backdrop-filter:blur(4px)}
+nav.tabs{background:rgba(7,18,43,.92);backdrop-filter:blur(10px);padding:6px 32px;gap:6px;border-top:0;box-shadow:0 6px 20px rgba(7,18,43,.25)}
+nav.tabs a{border-radius:8px;border-bottom:0;color:#a9bddb;transition:all .2s}
+nav.tabs a:hover{background:rgba(255,255,255,.08);color:#fff}
+nav.tabs a.on{background:linear-gradient(135deg,#2a78d6,#1b55a8);color:#fff;box-shadow:0 0 14px rgba(92,200,255,.45)}
+.card{border-radius:12px;border:1px solid rgba(22,50,92,.10);box-shadow:0 1px 2px rgba(16,40,90,.05),0 8px 24px rgba(16,40,90,.06);transition:box-shadow .25s,transform .25s;position:relative}
+.card:not(.controls)::before{content:"";position:absolute;left:18px;top:-1px;width:44px;height:3px;border-radius:0 0 3px 3px;background:linear-gradient(90deg,var(--blue),var(--glow))}
+.card:hover{box-shadow:0 2px 4px rgba(16,40,90,.06),0 14px 34px rgba(16,40,90,.11)}
+.card h2{letter-spacing:-.005em}
+.view.on{animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.seg{border-radius:8px;box-shadow:inset 0 1px 2px rgba(0,0,0,.05)}
+.seg button{transition:all .18s}
+.seg button:hover:not(.on){background:#eef3fb}
+.seg button.on{background:linear-gradient(135deg,#16325c,#2a78d6);box-shadow:0 0 10px rgba(42,120,214,.4)}
+.btn{border-radius:8px;transition:all .18s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(16,40,90,.12)}
+.btn.primary{background:linear-gradient(135deg,#16325c,#2a78d6)}
+.stat{border-radius:10px;background:linear-gradient(180deg,#fff,#f3f6fb);border-color:rgba(22,50,92,.12);transition:transform .2s}
+.stat:hover{transform:translateY(-2px)}
+.stat .v{color:var(--navy)}
+#model{background:radial-gradient(circle at 50% 40%,#f4f9ff,#e6eef9);border-radius:10px}
+.doc{border-radius:12px;transition:all .22s;box-shadow:0 1px 3px rgba(16,40,90,.06)}
+.doc:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(16,40,90,.14);border-color:var(--blue)}
+.doc.rec{border:2px solid var(--orange);box-shadow:0 0 18px rgba(235,104,52,.25)}
+.pages{border-radius:12px;background:linear-gradient(180deg,#dfe5ee,#cfd7e4)}
+.keyres{border-radius:0 10px 10px 0;border-left-color:var(--blue);background:linear-gradient(90deg,#f1f6fd,#fbfbf9)}
+.note{border-radius:10px}
+input[type=range]{height:6px}
+.footer{text-align:center}
+@media(max-width:700px){header.top{padding:28px 20px 22px}header.top h1{font-size:30px}}
+@keyframes flowU{to{stroke-dashoffset:-24}} @keyframes flowD{to{stroke-dashoffset:24}}
+</style>
+</head>
+<body>
+<header class="top">
+<svg class="hero" viewBox="0 0 1200 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#5cc8ff" stop-opacity="0"/><stop offset=".5" stop-color="#5cc8ff"/><stop offset="1" stop-color="#f0a35e" stop-opacity="0"/></linearGradient></defs>
+  <rect x="640" y="30" width="520" height="14" rx="3" fill="#2a4f8f"/><rect x="640" y="216" width="520" height="14" rx="3" fill="#2a4f8f"/>
+  <g stroke="url(#hg)" stroke-width="5" stroke-linecap="round">
+    <line x1="700" y1="44" x2="700" y2="216"/><line x1="790" y1="44" x2="790" y2="216"/><line x1="870" y1="44" x2="870" y2="216"/><line x1="985" y1="44" x2="985" y2="216"/><line x1="1100" y1="44" x2="1100" y2="216"/>
+  </g>
+  <g stroke="#bfe6ff" stroke-width="3" stroke-dasharray="3 21" stroke-linecap="round" fill="none">
+    <line x1="700" y1="44" x2="700" y2="216" style="animation:flowD 1.1s linear infinite"/><line x1="790" y1="44" x2="790" y2="216" style="animation:flowU 1.4s linear infinite"/><line x1="870" y1="44" x2="870" y2="216" style="animation:flowD 0.9s linear infinite"/><line x1="985" y1="44" x2="985" y2="216" style="animation:flowU 1.2s linear infinite"/><line x1="1100" y1="44" x2="1100" y2="216" style="animation:flowD 1.0s linear infinite"/>
+  </g>
+  <g fill="#f0a35e" opacity=".8"><circle cx="745" cy="130" r="5"><animate attributeName="opacity" values=".2;1;.2" dur="2.4s" repeatCount="indefinite"/></circle><circle cx="928" cy="120" r="5"><animate attributeName="opacity" values="1;.2;1" dur="2.8s" repeatCount="indefinite"/></circle><circle cx="1042" cy="140" r="5"><animate attributeName="opacity" values=".3;1;.3" dur="3.1s" repeatCount="indefinite"/></circle></g>
+</svg>
+  <div class="kicker">Bezryadin group · University of Illinois Urbana-Champaign</div>
+  <h1>The N-Nanowire Dayem Loop Qubit</h1>
+  <div class="sub">Current&ndash;phase relation, Hamiltonian, potential and energy levels of N superconducting nanowires in parallel, with arbitrary wire positions, field and trapped vortices, plus the full handwritten and typed derivations. <span style="opacity:.75">Shashank Satish</span></div>
+  <div class="badges"><span>N = 2 … 10 wires</span><span>symmetric · asymmetric</span><span>Likharev · 2m+1 CPR</span><span>vortex sectors</span><span>11 handwritten + typed derivations</span></div>
+</header>
+<nav class="tabs">
+  <a href="#explore" data-v="explore" class="on">Explorer</a>
+  <a href="#derivation" data-v="derivation">Derivation</a>
+  <a href="#library" data-v="library">Document library</a>
+  <a href="#about" data-v="about">Model &amp; method</a>
+</nav>
+<main>
+
+<!-- ======================= EXPLORER ======================= -->
+<section class="view on" id="v-explore">
+<div class="layout">
+  <aside class="card controls" id="controls">
+    <h2>Device</h2>
+    <label class="row">Number of wires N <input type="number" id="inN" min="2" max="10" step="1" value="3"></label>
+    <input type="range" id="rgN" min="2" max="10" step="1" value="3">
+
+    <h3>Wire positions</h3>
+    <div class="seg" id="segGeom"><button data-g="sym" class="on">Symmetric</button><button data-g="asym">Asymmetric</button></div>
+    <div id="xbox"></div>
+    <div id="xtools" style="display:none;gap:6px;margin-top:6px"><button class="btn" id="btnRand">Random positions</button> <button class="btn" id="btnReset">Reset to uniform</button></div>
+
+    <h3>Field</h3>
+    <label class="row">b = BLW/Φ₀ <input type="number" id="inB" step="0.05" value="2"></label>
+    <input type="range" id="rgB" min="0" max="8" step="0.01" value="2">
+
+    <h3>Vortices (one integer per loop)</h3>
+    <div class="nrow" id="nbox"></div>
+    <div style="margin-top:6px"><button class="btn" id="btnN0">All zero</button></div>
+
+    <h3>Current&ndash;phase relation</h3>
+    <div class="seg" id="segCPR"><button data-c="lik" class="on">Likharev cubic</button><button data-c="pl">2m+1 power law</button></div>
+    <div id="plbox" style="display:none">
+      <label class="row">m <input type="number" id="inM" min="1" max="8" step="1" value="2"></label>
+      <label class="row">a <input type="number" id="inA" min="0.05" step="0.05" value="1"></label>
+      <div class="small">I/I₀ = φ/φ₀ − a(φ/φ₀)<sup>2m+1</sup>; m = 1, a = 1 is the Likharev CPR.</div>
+    </div>
+
+    <h3>Constants</h3>
+    <label class="row">φ₀ <span><input type="number" id="inPhi0" step="0.1" value="31.4159"> </span></label>
+    <label class="row"><span>E<sub>C</sub>/h [GHz]</span> <input type="number" id="inEC" step="0.001" value="0.0497"></label>
+    <label class="row"><span>ħI₀/2e /h [GHz]</span> <input type="number" id="inE0" step="0.1" value="496.68"></label>
+    <div class="small">Defaults: φ₀ = 10π, I₀ = 1 µA, E<sub>C</sub>/h = 0.0497 GHz (the value that reproduces Table I of the Dayem loop paper).</div>
+  </aside>
+
+  <div>
+    <div class="card" id="model">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <h2>Qubit model</h2>
+        <span class="small">wire phases and circulating currents at the bottom of the well</span>
+      </div>
+      <div id="modelSvg"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <h2>Potential U(φ)</h2>
+        <span class="small" id="caseLabel"></span>
+      </div>
+      <div class="keyres" id="hamBox"></div>
+      <div class="stats" id="stats"></div>
+      <div id="wellNote"></div>
+      <div class="grid2" style="margin-top:10px">
+        <div id="plotU" class="plot"></div>
+        <div id="plotZoom" class="plot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Energy levels in the well</h2>
+      <div class="small" style="margin-bottom:6px">Finite-difference solution of Ĥ = −4E<sub>C</sub>∂²<sub>φ</sub> + (ħI₀/2e)U(φ) inside the well (second-order grid with Richardson extrapolation, Dirichlet walls about 25ħω above the bottom). Energies in GHz, measured from the bottom of the well.</div>
+      <div class="grid2">
+        <div><table class="t" id="levTable"></table><div id="levNote" class="small" style="margin-top:6px"></div></div>
+        <div id="plotSweep" class="plot short"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Wire-by-wire numbers</h2>
+      <div class="small">φ<sub>i</sub> = φ + a<sub>i</sub> + c<sub>i</sub>, with a<sub>i</sub> = 2πb(x<sub>i</sub> − ΣX/N) and c<sub>i</sub> = 2π((1/N)Σ(N−p)n<sub>p</sub> − Σ<sub>j&lt;i</sub>n<sub>j</sub>). Currents evaluated at the bottom of the well.</div>
+      <div class="grid2" style="margin-top:8px">
+        <div style="overflow-x:auto"><table class="t" id="wireTable"></table></div>
+        <div style="overflow-x:auto"><table class="t" id="tenTable"></table></div>
+      </div>
+      <div id="checks" class="small" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <h2>Vortex-sector grid</h2>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="small">b values</span><input type="text" id="gridB" value="0, 2, 4, 5.7" style="width:130px">
+          <span class="small">sectors</span><input type="text" id="gridS" value="auto" style="width:220px" title="e.g. 0,0 ; 1,0 ; 0,1 or auto">
+        </div>
+      </div>
+      <div class="small" style="margin:4px 0 8px">Same layout as <span class="mono">make_figure</span> in N_Nanowire_Potential_Plots.py: rows are vortex sectors, columns are b. Dashed grey = symmetric positions (asymmetric mode). “auto” = no vortex, each single vortex, and the current sector.</div>
+      <div id="sectGrid" class="sectgrid"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ======================= DERIVATION ======================= -->
+<section class="view" id="v-derivation">
+  <div class="card">
+    <h2>Derivation for the current device</h2>
+    <div id="derivCase" class="small"></div>
+    <div id="derivRec" class="docgrid" style="margin-top:10px"></div>
+  </div>
+  <div class="card" id="viewerCard">
+    <div class="viewer">
+      <div>
+        <div style="font-family:var(--serif);font-size:22px;font-weight:600" id="vTitle"></div>
+        <div class="small" id="vMeta"></div>
+      </div>
+      <div class="keyres" id="vKey"></div>
+      <div class="bar">
+        <div class="seg" id="segView" style="margin:0"><button data-m="hw" class="on">Handwritten</button><button data-m="tex">Typed (LaTeX)</button><button data-m="both">Side by side</button><button data-m="src">LaTeX source</button></div>
+        <button class="btn" id="btnCopy">Copy LaTeX source</button>
+        <span class="small" id="vTexNote"></span>
+      </div>
+      <div id="vBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= LIBRARY ======================= -->
+<section class="view" id="v-library">
+  <div class="card">
+    <h2>Document library</h2>
+    <div class="small">Every derivation in the project, in the order it was done. Click one to open it.</div>
+    <h3>Three nanowires</h3><div class="docgrid" id="lib3"></div>
+    <h3>N nanowires</h3><div class="docgrid" id="libN"></div>
+  </div>
+</section>
+
+<!-- ======================= ABOUT ======================= -->
+<section class="view" id="v-about">
+  <div class="card" id="aboutBody" style="max-width:980px">
+    <h2>Model and method</h2>
+    <p>The device is N nanowires of length L connecting two bulk electrodes, at positions x<sub>1</sub> &lt; … &lt; x<sub>N</sub> measured in units of the outer separation W, with x<sub>1</sub> = −½ and x<sub>N</sub> = +½. Loop k lies between wires k and k+1 and holds n<sub>k</sub> vortices; b = BLW/Φ₀.</p>
+    <p><b>Meissner phase equation.</b> \(\varphi_{k+1}-\varphi_k = 2\pi b\,(x_{k+1}-x_k) - 2\pi n_k\), so \(\varphi_i=\varphi_1+2\pi b(x_i-x_1)-2\pi\sum_{k=1}^{i-1}n_k\).</p>
+    <p><b>Characteristic phase.</b> \(\varphi=\frac1N\sum_i\varphi_i\) gives \(\varphi_i=\varphi+a_i+c_i\) with</p>
+    \[a_i = 2\pi b\Big(x_i-\frac1N\sum_{k=1}^N x_k\Big),\qquad c_i = 2\pi\Big(\frac1N\sum_{p=1}^{N-1}(N-p)\,n_p-\sum_{j=1}^{i-1}n_j\Big).\]
+    <p><b>CPR.</b> Likharev: \(I_i/I_0=\varphi_i/\varphi_0-(\varphi_i/\varphi_0)^3\). Summing over wires and using \(\sum_i a_i=\sum_i c_i=0\):</p>
+    \[\frac{I}{I_0}=A\varphi-D\varphi^3-R,\quad A=\frac{N\varphi_0^2-3\sum_i(a_i+c_i)^2}{\varphi_0^3},\quad D=\frac{N}{\varphi_0^3},\quad R=\frac{\sum_i(a_i+c_i)^3}{\varphi_0^3}.\]
+    <p>For the 2m+1 CPR, \(I_i/I_0=\varphi_i/\varphi_0-a(\varphi_i/\varphi_0)^{2m+1}\), the explorer evaluates the summed CPR and its integral wire by wire (this is exact; it equals the binomial expansion in the notes term by term).</p>
+    <p><b>Hamiltonian.</b> \(\hat H=-4E_C\,\partial_\varphi^2+\frac{\hbar I_0}{2e}U(\varphi)\), with \(U=\tfrac12A\varphi^2-\tfrac14D\varphi^4-R\varphi\) for the Likharev CPR.</p>
+    <p><b>Numerics.</b> The page runs the same steps as <span class="mono">N_Nanowire_Potential_Plots.py</span> (a<sub>i</sub>, c<sub>i</sub>, the ten sums, A, D, R, stationary points of U). Energy levels: second-order finite differences on grids of 1500 and 3000 points spanning the well up to about 25ħω above the bottom (or up to the barrier tops if they are lower), eigenvalues by Sturm-sequence bisection, then Richardson extrapolation to remove the O(dx²) grid error. For the symmetric case the anharmonicity agrees with first-order perturbation theory, α ≈ −6DE<sub>C</sub>/A. On load, the page checks itself against the closed forms for N = 2 and N = 3 (see “Wire-by-wire numbers”).</p>
+    <p class="small">References: C. Sun and A. Bezryadin, Dayem loop qubit, arXiv:2603.17214; C. Sun et al., Nano Express 6, 035014 (2025).</p>
+  </div>
+</section>
+
+<div class="footer">N-nanowire qubit project · Shashank Satish, with Cliff Sun and Prof. Alexey Bezryadin · Department of Physics, UIUC</div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const DOCS={"n3_sym": {"title": "3-Nanowire Qubit Hamiltonian (symmetric, x₂ = 0)", "file": "3 Nanowire Qubit Hamiltonian 6.pdf", "desc": "Geometry, Meissner phases, characteristic phase, Likharev CPR summed over three equally spaced wires, Hamiltonian.", "key": "Wires at \\(x=-\\tfrac12,0,\\tfrac12\\):\\quad \\(\\varphi_1=\\varphi-\\pi b,\\ \\varphi_2=\\varphi,\\ \\varphi_3=\\varphi+\\pi b\\)\\[A=\\frac{3\\varphi_0^2-6\\pi^2b^2}{\\varphi_0^3},\\qquad D=\\frac{3}{\\varphi_0^3},\\qquad R=0\\]\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\Big(\\tfrac12A\\varphi^2-\\tfrac14D\\varphi^4-R\\varphi\\Big)\\]", "hw_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg", "p-5.jpg", "p-6.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg"], "hw_pages": 6, "tex_pages": 3}, "n3_asym": {"title": "3-Nanowire Hamiltonian, asymmetric (x₂ ≠ 0)", "file": "3 Nanowire Qubit Hamiltonian Asymmetrical 5.pdf", "desc": "Middle wire moved off centre, breaking parity; a new tilt term R(x₂) appears.", "key": "\\[A=\\frac{3\\varphi_0^2-8\\pi^2b^2x_2^2-6\\pi^2b^2}{\\varphi_0^3},\\qquad D=\\frac{3}{\\varphi_0^3},\\qquad R=\\frac{4\\pi^3b^3x_2\\,(4x_2^2-9)}{9\\varphi_0^3}\\]\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\Big(\\tfrac12A\\varphi^2-\\tfrac14D\\varphi^4-R\\varphi\\Big)\\]", "hw_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg", "p-5.jpg", "p-6.jpg", "p-7.jpg", "p-8.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg"], "hw_pages": 8, "tex_pages": 4}, "n3_sym_pl": {"title": "New Hamiltonian using the realistic 2m+1 CPR (3 wires, symmetric)", "file": "New Hamiltonian Using The NEW CPR.pdf", "desc": "Replaces the Likharev cubic by the power-law CPR I/I₀ = φ/φ₀ − a(φ/φ₀)^{2m+1}, binomial expansion for three symmetric wires.", "key": "\\[\\frac{I}{I_0}=\\sum_{i=1}^{3}\\Big[\\frac{\\varphi_i}{\\varphi_0}-a\\Big(\\frac{\\varphi_i}{\\varphi_0}\\Big)^{2m+1}\\Big],\\qquad \\varphi_{1,3}=\\varphi\\mp\\pi b,\\ \\varphi_2=\\varphi\\]", "hw_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg", "p-5.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg"], "hw_pages": 5, "tex_pages": 3}, "n3_asym_pl": {"title": "New Hamiltonian for the asymmetric case (2m+1 CPR, 3 wires)", "file": "New Hamiltonian For Asymmetrical Case.pdf", "desc": "2m+1 CPR with the middle wire at x₂ ≠ 0; power sums of the three phase offsets via Newton’s identities.", "key": "\\[\\frac{I}{I_0}=\\sum_{i=1}^{3}\\Big[\\frac{\\varphi+z_i}{\\varphi_0}-a\\Big(\\frac{\\varphi+z_i}{\\varphi_0}\\Big)^{2m+1}\\Big],\\qquad M_k=\\sum_i z_i^k,\\ \\ M_k=-e_2M_{k-2}+e_3M_{k-3}\\]", "hw_files": ["p-01.jpg", "p-02.jpg", "p-03.jpg", "p-04.jpg", "p-05.jpg", "p-06.jpg", "p-07.jpg", "p-08.jpg", "p-09.jpg", "p-10.jpg", "p-11.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg"], "hw_pages": 11, "tex_pages": 4}, "n3_sym_vort": {"title": "Vortices: 3 nanowires, symmetric", "file": "Vortices 3 Nanowire Symmetrical.pdf", "desc": "One vorticity per loop (n₁₂, n₂₃) in the symmetric three-wire device, Likharev CPR.", "key": "\\[A=\\frac{3\\varphi_0^2-6\\pi^2b^2+12\\pi^2b(n_{12}+n_{23})-8\\pi^2(n_{12}^2+n_{12}n_{23}+n_{23}^2)}{\\varphi_0^3},\\quad D=\\frac{3}{\\varphi_0^3}\\]\\[R=\\frac{2\\pi^3}{\\varphi_0^3}(n_{12}-n_{23})\\Big[b^2-2b(n_{12}+n_{23})+\\tfrac49(2n_{12}^2+5n_{12}n_{23}+2n_{23}^2)\\Big]\\]\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\Big(\\tfrac12A\\varphi^2-\\tfrac14D\\varphi^4-R\\varphi\\Big)\\]", "hw_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg", "p-5.jpg", "p-6.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg"], "hw_pages": 6, "tex_pages": 4}, "n3_asym_vort": {"title": "Vortices: 3 nanowires, asymmetric", "file": "Vortices 3 Nanowire Asymmetrical 3.pdf", "desc": "Vortices plus a displaced middle wire x₂; tilt R factorises into three linear factors.", "key": "\\[R=\\frac{2\\pi^3}{9\\varphi_0^3}(2bx_2-n_{12}+n_{23})(2bx_2-3b+2n_{12}+4n_{23})(2bx_2+3b-4n_{12}-2n_{23})\\]\\[A=\\frac{3\\varphi_0^2-3\\pi^2\\big(2b^2+\\frac83b^2x_2^2-4b(n_{12}+n_{23})-\\frac83bx_2(n_{12}-n_{23})+\\frac83(n_{12}^2+n_{12}n_{23}+n_{23}^2)\\big)}{\\varphi_0^3},\\quad D=\\frac{3}{\\varphi_0^3}\\]\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\Big(\\tfrac12A\\varphi^2-\\tfrac14D\\varphi^4-R\\varphi\\Big)\\]", "hw_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg", "p-5.jpg", "p-6.jpg", "p-7.jpg", "p-8.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg"], "hw_pages": 8, "tex_pages": 4}, "nN_sym": {"title": "Generalizing to N nanowires (symmetric)", "file": "N Nanowire.pdf", "desc": "Uniform spacing d = 1/(N−1); φ₁ = φ − πb for every N; Σxᵢ² = N(N+1)/(12(N−1)).", "key": "\\[x_i=\\frac{2i-N-1}{2(N-1)},\\qquad \\varphi_i=\\varphi+2\\pi b\\,x_i,\\qquad \\sum_i x_i^2=\\frac{N(N+1)}{12(N-1)}\\]\\[A=\\frac{N}{\\varphi_0^3}\\Big[\\varphi_0^2-\\frac{(N+1)\\pi^2b^2}{N-1}\\Big],\\qquad D=\\frac{N}{\\varphi_0^3},\\qquad R=0\\]\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\Big(\\tfrac12A\\varphi^2-\\tfrac14D\\varphi^4-R\\varphi\\Big)\\]", "hw_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg", "p-5.jpg", "p-6.jpg", "p-7.jpg", "p-8.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg"], "hw_pages": 8, "tex_pages": 4}, "nN_asym": {"title": "N nanowires, asymmetric", "file": "N Nanowire Asymmetrical.pdf", "desc": "Arbitrary interior positions, carried as explicit sums Σxᵢ, Σxᵢ², Σxᵢ³.", "key": "\\[\\varphi_i=\\varphi+2\\pi b\\Big(x_i-\\frac1N\\sum_k x_k\\Big)\\]\\[A=\\frac{1}{\\varphi_0^3}\\Big\\{N\\varphi_0^2-12\\pi^2b^2\\Big[\\sum_i x_i^2-\\frac1N\\Big(\\sum_k x_k\\Big)^2\\Big]\\Big\\},\\quad D=\\frac{N}{\\varphi_0^3}\\]\\[R=\\frac{8\\pi^3b^3}{\\varphi_0^3}\\Big[\\sum_i x_i^3-\\frac3N\\Big(\\sum_k x_k\\Big)\\Big(\\sum_i x_i^2\\Big)+\\frac{2}{N^2}\\Big(\\sum_k x_k\\Big)^3\\Big]\\]\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\Big(\\tfrac12A\\varphi^2-\\tfrac14D\\varphi^4-R\\varphi\\Big)\\]", "hw_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg", "p-5.jpg", "p-6.jpg", "p-7.jpg", "p-8.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg"], "hw_pages": 8, "tex_pages": 4}, "nN_asym_pl": {"title": "N nanowires, asymmetric, 2m+1 CPR", "file": "N Nanowire Asymmetrical New CPR 3.pdf", "desc": "General positions with the power-law CPR; binomial expansion of (φ + aᵢ)^{2m+1} summed over the wires.", "key": "\\[\\frac{I}{I_0}=\\sum_{i=1}^{N}\\Big[\\frac{\\varphi+a_i}{\\varphi_0}-a\\Big(\\frac{\\varphi+a_i}{\\varphi_0}\\Big)^{2m+1}\\Big],\\qquad a_i=2\\pi b\\Big(x_i-\\frac1N\\sum_kx_k\\Big)\\]", "hw_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg", "p-5.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg"], "hw_pages": 5, "tex_pages": 3}, "nN_sym_vort": {"title": "N nanowires with vortices, symmetric", "file": "N Nanowire Symmetrical Vortices.pdf", "desc": "Uniform spacing with one vorticity nⱼ per loop; A, D, R as explicit sums over the loops.", "key": "\\[A=\\frac{1}{\\varphi_0^3}\\Big[N\\varphi_0^2-\\frac{\\pi^2N(N+1)b^2}{N-1}+\\frac{12\\pi^2b}{N-1}\\sum_j j(N-j)n_j-\\frac{12\\pi^2}{N}\\sum_{j,k}\\min(j,k)\\big(N-\\max(j,k)\\big)n_jn_k\\Big]\\]\\[D=\\frac{N}{\\varphi_0^3},\\qquad R=\\frac{1}{\\varphi_0^3}\\sum_i z_i^3,\\quad z_i=2\\pi(bx_i+T_i)\\]\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\Big(\\tfrac12A\\varphi^2-\\tfrac14D\\varphi^4-R\\varphi\\Big)\\]", "hw_files": ["p-01.jpg", "p-02.jpg", "p-03.jpg", "p-04.jpg", "p-05.jpg", "p-06.jpg", "p-07.jpg", "p-08.jpg", "p-09.jpg", "p-10.jpg", "p-11.jpg", "p-12.jpg", "p-13.jpg", "p-14.jpg", "p-15.jpg"], "tex_files": ["p-1.jpg", "p-2.jpg", "p-3.jpg", "p-4.jpg", "p-5.jpg", "p-6.jpg"], "hw_pages": 15, "tex_pages": 6}, "nN_asym_vort": {"title": "N nanowires with vortices, asymmetric", "file": "N Nanowire Asymmetrical Vortices 2.pdf", "desc": "Fully general positions and vortex numbers; the ten term-by-term sums of the cubic expansion.", "key": "\\[\\varphi_i=\\varphi+a_i+c_i,\\quad a_i=2\\pi b\\Big(x_i-\\frac1N\\sum_kx_k\\Big),\\quad c_i=2\\pi\\Big(\\frac1N\\sum_{p=1}^{N-1}(N-p)n_p-\\sum_{j=1}^{i-1}n_j\\Big)\\]\\[A=\\frac{N\\varphi_0^2-3\\sum_i(a_i+c_i)^2}{\\varphi_0^3},\\qquad D=\\frac{N}{\\varphi_0^3},\\qquad R=\\frac{\\sum_i(a_i+c_i)^3}{\\varphi_0^3}\\]\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\Big(\\tfrac12A\\varphi^2-\\tfrac14D\\varphi^4-R\\varphi\\Big)\\]", "hw_files": ["p-01.jpg", "p-02.jpg", "p-03.jpg", "p-04.jpg", "p-05.jpg", "p-06.jpg", "p-07.jpg", "p-08.jpg", "p-09.jpg", "p-10.jpg", "p-11.jpg"], "tex_files": ["p-01.jpg", "p-02.jpg", "p-03.jpg", "p-04.jpg", "p-05.jpg", "p-06.jpg", "p-07.jpg", "p-08.jpg", "p-09.jpg", "p-10.jpg", "p-11.jpg", "p-12.jpg", "p-13.jpg", "p-14.jpg", "p-15.jpg", "p-16.jpg", "p-17.jpg", "p-18.jpg", "p-19.jpg", "p-20.jpg", "p-21.jpg", "p-22.jpg", "p-23.jpg", "p-24.jpg", "p-25.jpg"], "hw_pages": 11, "tex_pages": 25}};
+const DOC_ORDER=["n3_sym", "n3_asym", "n3_sym_pl", "n3_asym_pl", "n3_sym_vort", "n3_asym_vort", "nN_sym", "nN_asym", "nN_asym_pl", "nN_sym_vort", "nN_asym_vort"];
+</script>
+<script>
+"use strict";
+const pi = Math.PI;
+const C1="#2a78d6", C2="#eb6834", C3="#1baf7a", GREY="#9a9994";
+
+// ------------------------------------------------------------------ state
+const S = { N:3, geom:'sym', x:null, n:null, b:2, cpr:'lik', m:2, a:1, phi0:10*pi, EC:0.0497, E0:496.68 };
+function uniform(N){ const x=[]; for(let i=1;i<=N;i++) x.push((2*i-N-1)/(2*(N-1))); return x; }
+S.x = uniform(S.N); S.n = new Array(S.N-1).fill(0);
+
+// ------------------------------------------------------------------ physics (same steps as N_Nanowire_Potential_Plots.py)
+function get_a_c(N, x, b, n){
+  const X=[0,...x], Nn=[0,...n];
+  let sum_x=0; for(let k=1;k<=N;k++) sum_x+=X[k];
+  let sum_n=0; for(let p=1;p<N;p++) sum_n+=(N-p)*Nn[p];
+  const a=new Array(N+1).fill(0), c=new Array(N+1).fill(0);
+  for(let i=1;i<=N;i++){
+    a[i]=2*pi*b*(X[i]-sum_x/N);
+    let partial=0; for(let j=1;j<i;j++) partial+=Nn[j];
+    c[i]=2*pi*(sum_n/N-partial);
+  }
+  return {a,c};
+}
+function get_ADR(N, x, b, n, phi0){
+  const {a,c}=get_a_c(N,x,b,n);
+  const T=new Array(11).fill(0);
+  for(let i=1;i<=N;i++){
+    T[2]+=a[i]**3; T[3]+=c[i]**3; T[4]+=3*a[i]; T[5]+=3*c[i];
+    T[6]+=3*a[i]**2; T[7]+=3*a[i]**2*c[i]; T[8]+=3*c[i]**2; T[9]+=3*c[i]**2*a[i]; T[10]+=6*a[i]*c[i];
+  }
+  T[1]=N;
+  const D=T[1]/phi0**3;
+  const A=(N*phi0**2-(T[6]+T[8]+T[10]))/phi0**3;
+  const R=(T[2]+T[3]+T[7]+T[9])/phi0**3;
+  return {A,D,R,T,a,c};
+}
+// generic model: offsets s_i, CPR kind
+function makeModel(st, x, n, b){
+  const N=x.length, phi0=st.phi0;
+  const {a,c}=get_a_c(N,x,b,n);
+  const s=[]; for(let i=1;i<=N;i++) s.push(a[i]+c[i]);
+  const mdl={N,s,a,c,phi0,kind:st.cpr};
+  if(st.cpr==='lik'){
+    const r=get_ADR(N,x,b,n,phi0); Object.assign(mdl,{A:r.A,D:r.D,R:r.R,T:r.T});
+    mdl.I=(p)=>r.A*p-r.D*p**3-r.R;
+    mdl.U=(p)=>0.5*r.A*p*p-0.25*r.D*p**4-r.R*p;
+    mdl.Iw=(i,p)=>{const q=(p+s[i])/phi0; return q-q**3;};
+  } else {
+    const m=st.m, aa=st.a, P=2*m+1;
+    const Ui=(q)=>phi0*(q*q/2-aa*Math.pow(q,P+1)/(P+1));
+    let U0=0; for(const si of s) U0+=Ui(si/phi0);
+    mdl.I=(p)=>{let t=0; for(const si of s){const q=(p+si)/phi0; t+=q-aa*Math.pow(q,P);} return t;};
+    mdl.U=(p)=>{let t=0; for(const si of s) t+=Ui((p+si)/phi0); return t-U0;};
+    mdl.Iw=(i,p)=>{const q=(p+s[i])/phi0; return q-aa*Math.pow(q,P);};
+    mdl.m=m; mdl.aa=aa;
+  }
+  return mdl;
+}
+// stationary points of U: zeros of I
+function stationary(mdl){
+  let L;
+  if(mdl.kind==='lik'){
+    const roots=cubicRoots(-mdl.D,0,mdl.A,-mdl.R);
+    roots.sort((p,q)=>p-q);
+    if(roots.length===3) return {ok:true,left:roots[0],min:roots[1],right:roots[2]};
+    return {ok:false};
+  }
+  const smax=Math.max(...mdl.s.map(Math.abs));
+  L=2.5*mdl.phi0+smax; const M=6000, h=2*L/M;
+  const zs=[]; let p0=-L, f0=mdl.I(p0);
+  for(let k=1;k<=M;k++){ const p1=-L+k*h, f1=mdl.I(p1);
+    if(f0===0||f0*f1<0){ let lo=p0,hi=p1,flo=f0; for(let it=0;it<60;it++){const md=(lo+hi)/2,fm=mdl.I(md); if(flo*fm<=0){hi=md}else{lo=md;flo=fm}} zs.push({p:(lo+hi)/2, up:f1>f0}); }
+    p0=p1; f0=f1; }
+  const mins=zs.filter(z=>z.up); if(!mins.length) return {ok:false};
+  let best=mins[0]; for(const z of mins) if(Math.abs(z.p)<Math.abs(best.p)) best=z;
+  const lefts=zs.filter(z=>!z.up&&z.p<best.p), rights=zs.filter(z=>!z.up&&z.p>best.p);
+  if(!lefts.length||!rights.length) return {ok:false};
+  return {ok:true,left:lefts[lefts.length-1].p,min:best.p,right:rights[0].p};
+}
+function cubicRoots(a,b,c,d){ // a x^3 + b x^2 + c x + d, real roots
+  b/=a;c/=a;d/=a; const p=c-b*b/3, q=2*b*b*b/27-b*c/3+d, sh=-b/3; const disc=q*q/4+p*p*p/27;
+  if(disc>1e-14*Math.max(1,Math.abs(q*q))) { const u=Math.cbrt(-q/2+Math.sqrt(disc)), v=Math.cbrt(-q/2-Math.sqrt(disc)); return [u+v+sh]; }
+  if(p>=0) return [sh];
+  const r=2*Math.sqrt(-p/3), th=Math.acos(Math.max(-1,Math.min(1,3*q/(p*r))))/3;
+  return [0,1,2].map(k=>r*Math.cos(th-2*pi*k/3)+sh);
+}
+// energy levels
+function levels(mdl, st, sp, K=5){
+  const EC=st.EC, E0=st.E0, Um=mdl.U(sp.min);
+  const hh=1e-3*mdl.phi0; const U2=(mdl.U(sp.min+hh)-2*Um+mdl.U(sp.min-hh))/(hh*hh);
+  if(!(U2>0)) return null;
+  const w=Math.sqrt(8*EC*E0*U2);               // harmonic estimate, GHz
+  const hL=mdl.U(sp.left)-Um, hR=mdl.U(sp.right)-Um, hBar=Math.min(hL,hR)*E0;
+  const cap=Math.min(hBar, 25*w);
+  function edge(dir, lim){ let lo=sp.min, hi=lim; for(let it=0;it<70;it++){const md=(lo+hi)/2; if((mdl.U(md)-Um)*E0<cap) lo=md; else hi=md;} return lo; }
+  const pa=edge(-1,sp.left), pb=edge(1,sp.right);
+  function solve(M){
+    const dx=(pb-pa)/(M+1), d=new Float64Array(M), e=-4*EC/(dx*dx); let dmin=Infinity;
+    for(let j=0;j<M;j++){ d[j]=8*EC/(dx*dx)+E0*(mdl.U(pa+(j+1)*dx)-Um); if(d[j]<dmin) dmin=d[j]; }
+    const count=(lam)=>{ let q=d[0]-lam, c=q<0?1:0; for(let j=1;j<M;j++){ if(q===0) q=1e-300; q=d[j]-lam-e*e/q; if(q<0) c++; } return c; };
+    const res=[]; const hi=cap*1.2+10*w;
+    for(let k=0;k<K;k++){ let lo=dmin-2*Math.abs(e), up=hi; if(count(up)<=k) break;
+      for(let it=0;it<56;it++){ const md=(lo+up)/2; if(count(md)>k) up=md; else lo=md; } res.push((lo+up)/2); }
+    return res;
+  }
+  const E1=solve(1500), E2=solve(3000), out=[];   // Richardson: E = (4 E(dx/2) - E(dx)) / 3
+  for(let k=0;k<Math.min(E1.length,E2.length);k++) out.push((4*E2[k]-E1[k])/3);
+  return {E:out, w, hBar, hL:hL*E0, hR:hR*E0, cap};
+}
+
+// ------------------------------------------------------------------ UI helpers
+const $=(id)=>document.getElementById(id);
+const fmt=(v,d=4)=>{ if(!isFinite(v)) return '—'; if(v!==0&&(Math.abs(v)<1e-3||Math.abs(v)>=1e5)) return v.toExponential(3); return v.toFixed(d); };
+const sfmt=(v,d=4)=>(v>=0?'+':'')+fmt(v,d);
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('on'); setTimeout(()=>el.classList.remove('on'),1600); }
+const isSym=()=>S.geom==='sym';
+
+function buildX(){
+  const box=$('xbox'); box.innerHTML='';
+  if(isSym()){ box.innerHTML=`<div class="small mono">x<sub>i</sub> = (2i − N − 1)/(2(N − 1))<br>${S.x.map(v=>v.toFixed(3)).join(', ')}</div>`; $('xtools').style.display='none'; return; }
+  $('xtools').style.display='flex';
+  for(let i=0;i<S.N;i++){
+    const fixed=(i===0||i===S.N-1);
+    const row=document.createElement('div'); row.className='xrow';
+    row.innerHTML=`<span class="mono">x<sub>${i+1}</sub></span>`+(fixed?`<span class="small">fixed (electrode end)</span>`:`<input type="range" min="-0.5" max="0.5" step="0.005" value="${S.x[i]}">`)+`<span class="mono">${S.x[i].toFixed(3)}</span>`;
+    if(!fixed){ const r=row.querySelector('input'), lab=row.querySelectorAll('span')[1];
+      r.addEventListener('input',()=>{ let v=+r.value; const lo=S.x[i-1]+0.01, hi=S.x[i+1]-0.01; v=Math.max(lo,Math.min(hi,v)); S.x[i]=v; r.value=v; lab.textContent=v.toFixed(3); update(); }); }
+    box.appendChild(row);
+  }
+}
+function buildN(){
+  const box=$('nbox'); box.innerHTML='';
+  for(let k=0;k<S.N-1;k++){
+    const el=document.createElement('div'); el.className='stepper';
+    el.innerHTML=`<span class="l">n${S.N===3?['₁₂','₂₃'][k]:subs(k+1)}</span><button>−</button><b>${S.n[k]}</b><button>+</button>`;
+    const [bm,bp]=el.querySelectorAll('button'), val=el.querySelector('b');
+    bm.onclick=()=>{S.n[k]=Math.max(-5,S.n[k]-1); val.textContent=S.n[k]; update();};
+    bp.onclick=()=>{S.n[k]=Math.min(5,S.n[k]+1); val.textContent=S.n[k]; update();};
+    box.appendChild(el);
+  }
+}
+function subs(k){ return String(k).split('').map(ch=>'₀₁₂₃₄₅₆₇₈₉'[+ch]).join(''); }
+function setN(N){ N=Math.max(2,Math.min(10,Math.round(N)||2)); S.N=N; $('inN').value=N; $('rgN').value=N; S.x=uniform(N); S.n=new Array(N-1).fill(0); buildX(); buildN(); update(); }
+
+// ------------------------------------------------------------------ qubit model drawing
+function drawModel(mdl, sp){
+  const W=980, H=380, L=110, Rr=W-110, top=84, bot=284, eh=26;
+  const X=(x)=>L+(x+0.5)*(Rr-L);
+  const N=mdl.N; let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif">`;
+  svg+=`<defs><linearGradient id="el" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9ccd3"/><stop offset="1" stop-color="#a7abb5"/></linearGradient>
+  <pattern id="fieldDots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="1.4" fill="#2a78d6" opacity="0.35"/></pattern></defs>`;
+  // loops
+  for(let k=0;k<N-1;k++){
+    const x0=X(S.x[k]), x1=X(S.x[k+1]);
+    svg+=`<rect x="${x0}" y="${top}" width="${x1-x0}" height="${bot-top}" fill="${S.b!==0?'url(#fieldDots)':'none'}"/>`;
+    const nk=S.n[k];
+    if(nk!==0){ const cx=(x0+x1)/2, cy=(top+bot)/2, cnt=Math.min(Math.abs(nk),5), col=nk>0?C2:'#7a4fd0';
+      for(let v=0;v<cnt;v++){ const yy=cy+(v-(cnt-1)/2)*30;
+        svg+=`<g><circle cx="${cx}" cy="${yy}" r="11" fill="#fff" stroke="${col}" stroke-width="2"/>`;
+        svg+= nk>0?`<circle cx="${cx}" cy="${yy}" r="3" fill="${col}"/>`:`<path d="M${cx-5} ${yy-5}L${cx+5} ${yy+5}M${cx+5} ${yy-5}L${cx-5} ${yy+5}" stroke="${col}" stroke-width="2"/>`;
+        svg+=`<path d="M${cx+14} ${yy-6} A15 15 0 0 1 ${cx+14} ${yy+6}" fill="none" stroke="${col}" stroke-width="1.2" opacity=".7"/></g>`; }
+      svg+=`<text x="${cx}" y="${bot-10}" text-anchor="middle" font-size="12" fill="${col}" font-weight="600">n = ${nk}</text>`;
+    } else svg+=`<text x="${(x0+x1)/2}" y="${bot-10}" text-anchor="middle" font-size="11" fill="#9a9994">n = 0</text>`;
+  }
+  // electrodes
+  svg+=`<rect x="${L-40}" y="${top-eh}" width="${Rr-L+80}" height="${eh}" rx="3" fill="url(#el)" stroke="#8b8f99"/>`;
+  svg+=`<rect x="${L-40}" y="${bot}" width="${Rr-L+80}" height="${eh}" rx="3" fill="url(#el)" stroke="#8b8f99"/>`;
+  svg+=`<text x="${L-50}" y="${top-8}" text-anchor="end" font-size="12" fill="#4a4e57">electrode</text>`;
+  // wires with current
+  const curr=[]; for(let i=0;i<N;i++) curr.push(sp.ok?mdl.Iw(i,sp.min):0);
+  const cmax=Math.max(1e-9,...curr.map(Math.abs));
+  const lvl=[]; for(let i=0;i<N;i++){ lvl.push(i>0 && X(S.x[i])-X(S.x[i-1])<86 && lvl[i-1]===0 ? 1 : 0); }
+  for(let i=0;i<N;i++){
+    const xx=X(S.x[i]), I=curr[i], f=Math.abs(I)/cmax, col=I>=0?C1:C2;
+    svg+=`<line x1="${xx}" y1="${top}" x2="${xx}" y2="${bot}" stroke="#2b2f38" stroke-width="7" stroke-linecap="butt"/>`;
+    if(sp.ok && Math.abs(I)>1e-9){
+      const dur=(2.4-1.9*f).toFixed(2);
+      svg+=`<line x1="${xx}" y1="${top}" x2="${xx}" y2="${bot}" stroke="${col}" stroke-width="${2+3*f}" stroke-dasharray="8 4" style="animation:${I>=0?'flowU':'flowD'} ${dur}s linear infinite"/>`;
+      const ay=(top+bot)/2, s=I>=0?-1:1;
+      svg+=`<path d="M${xx-8} ${ay-6*s} L${xx} ${ay+8*s} L${xx+8} ${ay-6*s}" fill="none" stroke="${col}" stroke-width="2.4" transform="translate(0,0)" opacity=".95"/>`;
+    }
+    const dy=16*lvl[i];
+    svg+=`<text x="${xx}" y="${top-eh-26-dy}" text-anchor="middle" font-size="13" font-weight="600" fill="#1b1d22">${i+1}</text>`;
+    svg+=`<text x="${xx}" y="${top-eh-10-dy}" text-anchor="middle" font-size="11" fill="#4a4e57">φ${subs(i+1)}−φ = ${(mdl.s[i]).toFixed(2)}</text>`;
+    svg+=`<text x="${xx}" y="${bot+eh+16+2*dy}" text-anchor="middle" font-size="11" fill="#4a4e57">x = ${S.x[i].toFixed(3)}</text>`;
+    if(sp.ok) svg+=`<text x="${xx}" y="${bot+eh+31+2*dy}" text-anchor="middle" font-size="11" fill="${col}">I/I₀ = ${I.toFixed(3)}</text>`;
+  }
+  svg+=`<text x="${Rr+48}" y="${(top+bot)/2-6}" text-anchor="middle" font-size="13" fill="${C1}">B ⊙</text><text x="${Rr+48}" y="${(top+bot)/2+12}" text-anchor="middle" font-size="12" fill="#4a4e57">b = ${S.b.toFixed(2)}</text>`;
+  svg+=`<g font-size="11" fill="#4a4e57"><circle cx="${L-74}" cy="${top+30}" r="7" fill="#fff" stroke="${C2}" stroke-width="2"/><circle cx="${L-74}" cy="${top+30}" r="2" fill="${C2}"/><text x="${L-62}" y="${top+34}">vortex</text>
+  <circle cx="${L-74}" cy="${top+54}" r="7" fill="#fff" stroke="#7a4fd0" stroke-width="2"/><path d="M${L-77} ${top+51}L${L-71} ${top+57}M${L-71} ${top+51}L${L-77} ${top+57}" stroke="#7a4fd0" stroke-width="1.6"/><text x="${L-62}" y="${top+58}">antivortex</text></g>`;
+  svg+='</svg>';
+  $('modelSvg').innerHTML=svg;
+}
+
+// ------------------------------------------------------------------ plots
+const PL={displaylogo:false,responsive:true,modeBarButtonsToRemove:['lasso2d','select2d']};
+const baseLayout=(t,xt,yt)=>({title:{text:t,font:{family:'Source Serif 4',size:16}},margin:{l:62,r:14,t:40,b:70},paper_bgcolor:'#fff',plot_bgcolor:'#fff',font:{family:'IBM Plex Sans',size:12,color:'#1b1d22'},
+  xaxis:{title:xt,gridcolor:'#ecebe6',zerolinecolor:'#d6d4cd'},yaxis:{title:yt,gridcolor:'#ecebe6',zerolinecolor:'#d6d4cd'},showlegend:true,legend:{orientation:'h',x:0,y:-0.22,bgcolor:'rgba(255,255,255,0)'}});
+
+function plotMain(mdl, sp, symMdl, symSp, lev){
+  const col=isSym()?C1:C2, tr=[];
+  let span, ylo, yhi;
+  if(sp.ok){
+    const Ul=mdl.U(sp.left), Um=mdl.U(sp.min), Ur=mdl.U(sp.right), h=Math.max(Ul,Ur)-Um;
+    span=1.3*Math.max(Math.abs(sp.left),Math.abs(sp.right)); ylo=Um-0.2*h; yhi=Um+1.25*h;
+  } else { span=mdl.phi0; }
+  const xs=[], ys=[], ys2=[]; for(let k=0;k<=1200;k++){ const p=-span+2*span*k/1200; xs.push(p); ys.push(mdl.U(p)); if(symMdl) ys2.push(symMdl.U(p)); }
+  if(symMdl) tr.push({x:xs,y:ys2,mode:'lines',line:{color:GREY,dash:'dash',width:1.4},name:'symmetric positions'});
+  tr.push({x:xs,y:ys,mode:'lines',line:{color:col,width:2.4},name:'U(φ)'});
+  if(sp.ok){
+    tr.push({x:[sp.min],y:[mdl.U(sp.min)],mode:'markers',marker:{size:10,color:col,line:{color:'#fff',width:1.5}},name:'bottom of well'});
+    tr.push({x:[sp.left,sp.right],y:[mdl.U(sp.left),mdl.U(sp.right)],mode:'markers',marker:{size:9,color:'#fff',line:{color:col,width:2}},name:'barrier tops'});
+  }
+  const lay=baseLayout(`U(φ)  [ħI₀/2e]`,'φ','U(φ)  [ħI₀/2e]');
+  lay.xaxis.range=[-span,span]; if(sp.ok) lay.yaxis.range=[ylo,yhi];
+  if(!sp.ok) lay.annotations=[{text:'no well',x:0.5,y:0.5,xref:'paper',yref:'paper',showarrow:false,font:{size:20,color:'#a6402a'}}];
+  Plotly.react('plotU',tr,lay,PL);
+  // zoom
+  const tz=[]; const lz=baseLayout('Bottom of the well with levels','φ','E/h  [GHz]  (from well bottom)');
+  if(sp.ok && lev && lev.E.length){
+    const Um=mdl.U(sp.min), Etop=lev.E[Math.min(lev.E.length-1,4)]*1.25;
+    let a=sp.min, b2=sp.min; const stp=(sp.right-sp.left)/4000;
+    while(a>sp.left && (mdl.U(a)-Um)*S.E0<Etop) a-=stp; while(b2<sp.right && (mdl.U(b2)-Um)*S.E0<Etop) b2+=stp;
+    const zx=[], zy=[]; for(let k=0;k<=600;k++){ const p=a+(b2-a)*k/600; zx.push(p); zy.push((mdl.U(p)-Um)*S.E0); }
+    tz.push({x:zx,y:zy,mode:'lines',line:{color:col,width:2.4},name:'U(φ)',showlegend:false});
+    lev.E.forEach((E,k)=>{ let l=sp.min, r=sp.min; while(l>a && (mdl.U(l)-Um)*S.E0<E) l-=stp; while(r<b2 && (mdl.U(r)-Um)*S.E0<E) r+=stp;
+      tz.push({x:[l,r],y:[E,E],mode:'lines',line:{color:'#1b1d22',width:1.6},name:`E${k}`,showlegend:false,hovertemplate:`E${k} = ${E.toFixed(4)} GHz<extra></extra>`});
+      lz.annotations=(lz.annotations||[]).concat([{x:r,y:E,text:` ${k}`,showarrow:false,xanchor:'left',font:{size:11}}]); });
+    lz.xaxis.range=[a,b2]; lz.yaxis.range=[0,Etop];
+  } else lz.annotations=[{text:'no bound levels',x:0.5,y:0.5,xref:'paper',yref:'paper',showarrow:false,font:{size:16,color:'#a6402a'}}];
+  Plotly.react('plotZoom',tz,lz,PL);
+}
+
+let sweepTimer=null;
+function plotSweep(){
+  clearTimeout(sweepTimer);
+  sweepTimer=setTimeout(()=>{
+    const bs=[], f01=[], al=[]; const bmax=Math.max(8,S.b);
+    for(let k=0;k<=80;k++){ const b=bmax*k/80; const md=makeModel(S,S.x,S.n,b); const sp=stationary(md); if(!sp.ok) continue; const lv=levels(md,S,sp,3); if(!lv||lv.E.length<3) continue; bs.push(b); f01.push(lv.E[1]-lv.E[0]); al.push((lv.E[2]-lv.E[1])-(lv.E[1]-lv.E[0])); }
+    const lay=baseLayout('Transition frequency and anharmonicity vs b','b','GHz');
+    lay.shapes=[{type:'line',x0:S.b,x1:S.b,yref:'paper',y0:0,y1:1,line:{color:'#7b7f88',dash:'dot',width:1}}];
+    lay.yaxis2={title:'α  [GHz]',overlaying:'y',side:'right',showgrid:false}; lay.margin.r=60;
+    Plotly.react('plotSweep',[{x:bs,y:f01,mode:'lines',line:{color:C1,width:2},name:'E₀₁'},{x:bs,y:al,mode:'lines',line:{color:C2,width:2},name:'α = E₁₂ − E₀₁',yaxis:'y2'}],lay,PL);
+  },120);
+}
+
+// small SVG plot for sector grid
+function miniPlot(mdl, sp, symMdl, col){
+  const W=230,H=150,ml=6,mr=6,mt=6,mb=6;
+  if(!sp.ok) return `<svg viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="#fbfbf9"/><text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="14" fill="#a6402a">no well</text></svg>`;
+  const Ul=mdl.U(sp.left), Um=mdl.U(sp.min), Ur=mdl.U(sp.right), h=Math.max(Ul,Ur)-Um;
+  const span=1.3*Math.max(Math.abs(sp.left),Math.abs(sp.right)), ylo=Um-0.2*h, yhi=Um+1.25*h;
+  const X=(p)=>ml+(p+span)/(2*span)*(W-ml-mr), Y=(u)=>mt+(yhi-u)/(yhi-ylo)*(H-mt-mb);
+  const path=(f)=>{ let d=''; for(let k=0;k<=240;k++){ const p=-span+2*span*k/240; let u=f(p); u=Math.max(ylo-(yhi-ylo),Math.min(yhi+(yhi-ylo),u)); d+=(k?'L':'M')+X(p).toFixed(1)+' '+Y(u).toFixed(1); } return d; };
+  let s=`<svg viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="#fff"/><clipPath id="c${Math.random().toString(36).slice(2)}"></clipPath>`;
+  s+=`<line x1="${X(0)}" y1="${mt}" x2="${X(0)}" y2="${H-mb}" stroke="#ecebe6"/>`;
+  if(symMdl) s+=`<path d="${path(symMdl.U)}" fill="none" stroke="${GREY}" stroke-dasharray="4 3" stroke-width="1.2"/>`;
+  s+=`<path d="${path(mdl.U)}" fill="none" stroke="${col}" stroke-width="2"/>`;
+  s+=`<circle cx="${X(sp.min)}" cy="${Y(Um)}" r="4" fill="${col}" stroke="#fff"/><circle cx="${X(sp.left)}" cy="${Y(Ul)}" r="3.5" fill="#fff" stroke="${col}" stroke-width="1.5"/><circle cx="${X(sp.right)}" cy="${Y(Ur)}" r="3.5" fill="#fff" stroke="${col}" stroke-width="1.5"/>`;
+  return s+'</svg>';
+}
+function drawGrid(){
+  const bl=$('gridB').value.split(',').map(t=>parseFloat(t)).filter(v=>isFinite(v)).slice(0,6);
+  let secs=[]; const txt=$('gridS').value.trim();
+  if(txt===''||txt==='auto'){ secs.push(new Array(S.N-1).fill(0)); for(let k=0;k<S.N-1&&secs.length<5;k++){ const v=new Array(S.N-1).fill(0); v[k]=1; secs.push(v);} if(S.n.some(v=>v!==0)&&!secs.some(v=>v.join()===S.n.join())) secs.push(S.n.slice()); }
+  else secs=txt.split(';').map(g=>g.split(',').map(t=>parseInt(t)||0)).map(v=>{ const w=new Array(S.N-1).fill(0); v.slice(0,S.N-1).forEach((q,i)=>w[i]=q); return w; }).slice(0,8);
+  const g=$('sectGrid'); g.style.gridTemplateColumns=`repeat(${bl.length},minmax(150px,1fr))`; let html='';
+  const col=isSym()?C1:C2;
+  for(const n of secs) for(const b of bl){
+    const md=makeModel(S,S.x,n,b), sp=stationary(md); const sm=isSym()?null:makeModel(S,uniform(S.N),n,b);
+    const AR=S.cpr==='lik'?`A = ${md.A.toFixed(4)}, R = ${sfmt(md.R)}`:`m = ${S.m}, a = ${S.a}`;
+    html+=`<div class="cell">${miniPlot(md,sp,sm,col)}<div class="cap">b = ${b}, n = (${n.join(', ')})<br>${AR}</div></div>`;
+  }
+  g.innerHTML=html;
+}
+
+// ------------------------------------------------------------------ main update
+function caseKey(){ const vort=S.n.some(v=>v!==0); return {vort, sym:isSym(), N:S.N, cpr:S.cpr}; }
+function update(){
+  const mdl=makeModel(S,S.x,S.n,S.b), sp=stationary(mdl);
+  const symMdl=isSym()?null:makeModel(S,uniform(S.N),S.n,S.b), symSp=symMdl?stationary(symMdl):null;
+  const lev=sp.ok?levels(mdl,S,sp,5):null;
+  const ck=caseKey();
+  $('caseLabel').textContent=`N = ${S.N} · ${isSym()?'symmetric':'asymmetric'} · ${ck.vort?'vortices':'no vortices'} · ${S.cpr==='lik'?'Likharev cubic CPR':`2m+1 CPR (m = ${S.m}, a = ${S.a})`}`;
+  // Hamiltonian box
+  if(S.cpr==='lik'){
+    $('hamBox').innerHTML=`\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\Big(\\tfrac12 A\\varphi^2-\\tfrac14 D\\varphi^4-R\\varphi\\Big),\\quad A=${fmt(mdl.A,6)},\\ D=${fmt(mdl.D,8)},\\ R=${fmt(mdl.R,6)}\\]`;
+  } else {
+    $('hamBox').innerHTML=`\\[\\hat H=-4E_C\\,\\partial_\\varphi^2+\\frac{\\hbar I_0}{2e}\\sum_{i=1}^{${S.N}}\\Big[\\frac{(\\varphi+a_i+c_i)^2}{2\\varphi_0}-\\frac{${S.a}\\,\\varphi_0}{${2*S.m+2}}\\Big(\\frac{\\varphi+a_i+c_i}{\\varphi_0}\\Big)^{${2*S.m+2}}\\Big]\\]`;
+  }
+  if(window.MathJax&&MathJax.typesetPromise) MathJax.typesetPromise([$('hamBox')]).catch(()=>{});
+  // stats
+  const st=[];
+  if(S.cpr==='lik'){ st.push(['A',fmt(mdl.A,5)],['D',fmt(mdl.D,7)],['R',sfmt(mdl.R,5)]); }
+  if(sp.ok){ const Um=mdl.U(sp.min); st.push(['φ at well bottom',sfmt(sp.min,3)],['left barrier ΔU',fmt(mdl.U(sp.left)-Um,4)],['right barrier ΔU',fmt(mdl.U(sp.right)-Um,4)]);
+    if(lev&&lev.E.length>=3) st.push(['E₀₁ [GHz]',fmt(lev.E[1]-lev.E[0],4)],['α [GHz]',sfmt((lev.E[2]-lev.E[1])-(lev.E[1]-lev.E[0]),4)]); }
+  $('stats').innerHTML=st.map(([k,v])=>`<div class="stat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+  let wn='';
+  if(!sp.ok) wn=`<div class="note">No well: the current I(φ) has only one zero, so there is no local minimum of U(φ). For the Likharev CPR a well needs A &gt; 0 and |R| &lt; (2A/3)√(A/3D).</div>`;
+  else if(S.cpr==='lik' && Math.abs(mdl.R)<1e-12) wn=`<div class="note info">R = 0: the well is centred at φ = 0 and the two barriers are equal (this happens for mirror-symmetric positions with a mirror-symmetric vortex pattern n<sub>k</sub> = n<sub>N−k</sub>).</div>`;
+  $('wellNote').innerHTML=wn;
+  drawModel(mdl,sp);
+  plotMain(mdl,sp,symMdl,symSp,lev);
+  // levels table
+  if(lev&&lev.E.length){ let h='<tr><th>level</th><th>E − U<sub>min</sub> [GHz]</th><th>E<sub>k,k+1</sub> [GHz]</th></tr>';
+    lev.E.forEach((E,k)=>{ h+=`<tr><td>${k}</td><td>${E.toFixed(5)}</td><td>${k<lev.E.length-1?(lev.E[k+1]-E).toFixed(5):''}</td></tr>`; });
+    $('levTable').innerHTML=h;
+    $('levNote').innerHTML=`Harmonic estimate ħω/h = ${lev.w.toFixed(4)} GHz. Lower barrier = ${lev.hBar.toFixed(2)} GHz${lev.hBar<lev.E[lev.E.length-1]?' (some levels are above the barrier and are not bound)':''}.`;
+  } else { $('levTable').innerHTML='<tr><td>no well, no bound levels</td></tr>'; $('levNote').textContent=''; }
+  plotSweep();
+  // wire table
+  let wt='<tr><th>wire</th><th>x<sub>i</sub></th><th>a<sub>i</sub></th><th>c<sub>i</sub></th><th>φ<sub>i</sub>−φ</th><th>I<sub>i</sub>/I₀</th></tr>';
+  for(let i=0;i<S.N;i++) wt+=`<tr><td>${i+1}</td><td>${S.x[i].toFixed(3)}</td><td>${mdl.a[i+1].toFixed(4)}</td><td>${mdl.c[i+1].toFixed(4)}</td><td>${mdl.s[i].toFixed(4)}</td><td>${sp.ok?mdl.Iw(i,sp.min).toFixed(4):'—'}</td></tr>`;
+  $('wireTable').innerHTML=wt;
+  if(S.cpr==='lik'){ const T=mdl.T, nm=['','φ³ (coef.)','a³','c³','3φ²a (coef.)','3φ²c (coef.)','3a²φ (coef.)','3a²c','3c²φ (coef.)','3c²a','6φac (coef.)'], go=['D','R','R','0','0','A','R','A','R','A'];
+    let tt='<tr><th>term</th><th>Σ<sub>i</sub></th><th>goes into</th></tr>'; for(let k=1;k<=10;k++) tt+=`<tr><td>${k}: ${nm[k]}</td><td>${fmt(T[k],6)}</td><td>${go[k-1]}</td></tr>`; $('tenTable').innerHTML=tt; }
+  else $('tenTable').innerHTML='<tr><td>The ten-sum table is for the Likharev cubic CPR.</td></tr>';
+  drawGrid();
+  renderDeriv();
+}
+
+// ------------------------------------------------------------------ self-checks (run once)
+function selfChecks(){
+  const out=[]; const phi0=10*pi;
+  let worst=0;
+  for(const [b,n1] of [[0.7,0],[3.1,1]]){ const r=get_ADR(2,[-0.5,0.5],b,[n1],phi0); const Ac=(2*phi0**2-6*pi**2*(b-n1)**2)/phi0**3; worst=Math.max(worst,Math.abs(r.A-Ac),Math.abs(r.R)); }
+  for(const [b,x2] of [[2,0.2],[5.7,-0.3]]){ const r=get_ADR(3,[-0.5,x2,0.5],b,[0,0],phi0); const Ac=(3*phi0**2-8*pi**2*b**2*x2**2-6*pi**2*b**2)/phi0**3, Rc=4*pi**3*b**3*x2*(4*x2**2-9)/(9*phi0**3); worst=Math.max(worst,Math.abs(r.A-Ac),Math.abs(r.R-Rc)); }
+  // N=3 asymmetric with vortices closed form
+  for(const [b,x2,n12,n23] of [[2.3,0.17,1,0],[4.1,-0.22,1,2]]){ const r=get_ADR(3,[-0.5,x2,0.5],b,[n12,n23],phi0);
+    const Rc=(2*pi**3/(9*phi0**3))*(2*b*x2-n12+n23)*(2*b*x2-3*b+2*n12+4*n23)*(2*b*x2+3*b-4*n12-2*n23); worst=Math.max(worst,Math.abs(r.R-Rc)); }
+  // direct wire sum vs formula, random N
+  for(let N=4;N<=8;N++){ const x=uniform(N).map((v,i)=>i===0||i===N-1?v:v+0.03*Math.sin(7*i)); const n=x.slice(1).map((_,k)=>(k*5)%3-1); const b=2.7;
+    const st={cpr:'lik',phi0}; const md=makeModel(st,x,n,b); let Id=0; for(let i=0;i<N;i++) Id+=md.Iw(i,7); worst=Math.max(worst,Math.abs(Id-md.I(7))); }
+  // 2m+1 with m=1,a=1 equals Likharev
+  { const x=[-0.5,-0.1,0.3,0.5], n=[1,0,-1]; const A=makeModel({cpr:'lik',phi0},x,n,3.3), B=makeModel({cpr:'pl',phi0,m:1,a:1},x,n,3.3); for(const p of [-9,0,4,11]) worst=Math.max(worst,Math.abs(A.U(p)-B.U(p))); }
+  $('checks').innerHTML=`Self-check against the closed forms (N = 2 Dayem result, N = 3 asymmetric with and without vortices, direct wire sums for N = 4 to 8, 2m+1 at m = 1 vs Likharev): largest difference ${worst.toExponential(1)} ${worst<1e-9?'<span class="pill ok">passed</span>':'<span class="pill no">check</span>'}`;
+  window.__selfcheck=worst;
+}
+
+// ------------------------------------------------------------------ derivation / documents
+let current=null, viewMode='hw';
+function recommend(){
+  const ck=caseKey(); const rec=[]; let missing=null;
+  if(ck.cpr==='pl' && ck.vort){ missing='The 2m+1 CPR with vortices has not been derived yet. The graphs above are still exact (they sum the 2m+1 CPR wire by wire); the closest derivations are listed.'; rec.push(ck.N===3?(ck.sym?'n3_sym_vort':'n3_asym_vort'):(ck.sym?'nN_sym_vort':'nN_asym_vort'),'nN_asym_pl'); }
+  else if(ck.cpr==='pl'){ if(ck.N===3) rec.push(ck.sym?'n3_sym_pl':'n3_asym_pl'); rec.push('nN_asym_pl'); }
+  else if(ck.vort){ if(ck.N===3) rec.push(ck.sym?'n3_sym_vort':'n3_asym_vort'); rec.push(ck.sym?'nN_sym_vort':'nN_asym_vort'); }
+  else { if(ck.N===3) rec.push(ck.sym?'n3_sym':'n3_asym'); rec.push(ck.sym?'nN_sym':'nN_asym'); }
+  return {rec,missing};
+}
+function docCard(k, isRec){
+  const d=DOCS[k]; const tex=d.tex_pages>0;
+  return `<div class="doc ${isRec?'rec':''}" data-k="${k}"><div class="tt">${d.title}</div><div class="small" style="margin:4px 0 6px">${d.desc}</div>
+  <span class="pill">${d.hw_pages} handwritten pp.</span><span class="pill ${tex?'ok':'no'}">${tex?d.tex_pages+' typed pp.':'typed version coming'}</span></div>`;
+}
+function renderDeriv(){
+  const {rec,missing}=recommend(); const ck=caseKey();
+  $('derivCase').innerHTML=`Current device: <b>N = ${ck.N}, ${ck.sym?'symmetric':'asymmetric'}, ${ck.vort?'with vortices':'no vortices'}, ${ck.cpr==='lik'?'Likharev cubic CPR':'2m+1 CPR'}</b>. ${ck.N===2?'N = 2 is the Dayem loop of the reference paper; it is the N = 2 limit of the general-N derivations. ':''}${missing?`<div class="note">${missing}</div>`:''}`;
+  $('derivRec').innerHTML=rec.map(k=>docCard(k,true)).join('');
+  $('derivRec').querySelectorAll('.doc').forEach(el=>el.onclick=()=>openDoc(el.dataset.k));
+  if(!current||!rec.includes(current)) openDoc(rec[0],true);
+}
+function openDoc(k, silent){
+  current=k; const d=DOCS[k];
+  $('vTitle').textContent=d.title; $('vMeta').innerHTML=`${d.hw_pages} handwritten pages · ${d.tex_pages>0?d.tex_pages+' typed pages':'typed version not added yet'} · file: <span class="mono">${d.file}</span>`;
+  $('vKey').innerHTML=d.key||''; if(d.key&&window.MathJax&&MathJax.typesetPromise) MathJax.typesetPromise([$('vKey')]).catch(()=>{});
+  $('vKey').style.display=d.key?'block':'none';
+  if(d.tex_pages===0 && viewMode!=='hw') viewMode='hw';
+  document.querySelectorAll('#segView button').forEach(b=>{ b.classList.toggle('on',b.dataset.m===viewMode); b.disabled=(b.dataset.m!=='hw'&&d.tex_pages===0); b.style.opacity=b.disabled?.4:1; });
+  $('btnCopy').disabled=d.tex_pages===0; $('btnCopy').style.opacity=d.tex_pages===0?.4:1;
+  renderViewer();
+  if(!silent){ location.hash='derivation'; showView('derivation'); $('viewerCard').scrollIntoView({behavior:'smooth'}); }
+}
+function imgs(dir,n){ let h=''; for(let i=1;i<=n;i++) h+=`<img loading="lazy" src="${dir}/p-${String(i).padStart(dir.startsWith('tex')?2:(n>=10?2:1),'0')}.jpg" alt="page ${i}">`; return h; }
+function hwList(k){ const d=DOCS[k]; return d.hw_files.map(f=>`<img loading="lazy" src="hw/${k}/${f}" alt="">`).join(''); }
+function texList(k){ const d=DOCS[k]; return d.tex_files.map(f=>`<img loading="lazy" src="tex/${k}/${f}" alt="">`).join(''); }
+async function renderViewer(){
+  const k=current, body=$('vBody');
+  if(viewMode==='hw') body.innerHTML=`<div class="pages">${hwList(k)}</div>`;
+  else if(viewMode==='tex') body.innerHTML=`<div class="pages">${texList(k)}</div>`;
+  else if(viewMode==='both') body.innerHTML=`<div class="pages split"><div>${hwList(k)}</div><div>${texList(k)}</div></div>`;
+  else { body.innerHTML='<pre class="src">loading…</pre>'; body.querySelector('pre').textContent=await getSrc(k); }
+}
+const srcCache={};
+async function getSrc(k){ if(srcCache[k]) return srcCache[k]; try{ const r=await fetch(`tex/${k}.tex.txt`); srcCache[k]=await r.text(); }catch(e){ srcCache[k]='Could not load the source.'; } return srcCache[k]; }
+function showView(v){ document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v)); document.querySelectorAll('nav.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+  if(v==='explore') setTimeout(()=>{['plotU','plotZoom','plotSweep'].forEach(id=>{try{Plotly.Plots.resize(id)}catch(e){}})},50);
+  if(v==='about'&&window.MathJax&&MathJax.typesetPromise) MathJax.typesetPromise([$('aboutBody')]).catch(()=>{}); }
+
+// ------------------------------------------------------------------ wiring
+function init(){
+  $('inN').onchange=()=>setN(+$('inN').value); $('rgN').oninput=()=>setN(+$('rgN').value);
+  $('rgB').oninput=()=>{ S.b=+$('rgB').value; $('inB').value=S.b; update(); };
+  $('inB').onchange=()=>{ S.b=+$('inB').value||0; $('rgB').value=S.b; update(); };
+  document.querySelectorAll('#segGeom button').forEach(b=>b.onclick=()=>{ S.geom=b.dataset.g; document.querySelectorAll('#segGeom button').forEach(c=>c.classList.toggle('on',c===b)); if(S.geom==='sym') S.x=uniform(S.N); else if(S.N===2){} buildX(); update(); });
+  document.querySelectorAll('#segCPR button').forEach(b=>b.onclick=()=>{ S.cpr=b.dataset.c; document.querySelectorAll('#segCPR button').forEach(c=>c.classList.toggle('on',c===b)); $('plbox').style.display=S.cpr==='pl'?'block':'none'; update(); });
+  $('inM').onchange=()=>{ S.m=Math.max(1,Math.min(8,parseInt($('inM').value)||1)); $('inM').value=S.m; update(); };
+  $('inA').onchange=()=>{ S.a=Math.max(0.01,+$('inA').value||1); update(); };
+  $('inPhi0').onchange=()=>{ S.phi0=+$('inPhi0').value||10*pi; update(); };
+  $('inEC').onchange=()=>{ S.EC=+$('inEC').value||0.0497; update(); };
+  $('inE0').onchange=()=>{ S.E0=+$('inE0').value||496.68; update(); };
+  $('btnN0').onclick=()=>{ S.n=new Array(S.N-1).fill(0); buildN(); update(); };
+  $('btnRand').onclick=()=>{ const N=S.N; const pts=[]; for(let i=0;i<N-2;i++) pts.push(-0.42+0.84*Math.random()); pts.sort((p,q)=>p-q); for(let i=1;i<pts.length;i++) if(pts[i]-pts[i-1]<0.07) pts[i]=pts[i-1]+0.07; S.x=[-0.5,...pts.map(v=>Math.min(0.43,+v.toFixed(3))),0.5]; buildX(); update(); };
+  $('btnReset').onclick=()=>{ S.x=uniform(S.N); buildX(); update(); };
+  $('gridB').onchange=drawGrid; $('gridS').onchange=drawGrid;
+  document.querySelectorAll('#segView button').forEach(b=>b.onclick=()=>{ if(b.disabled) return; viewMode=b.dataset.m; document.querySelectorAll('#segView button').forEach(c=>c.classList.toggle('on',c===b)); renderViewer(); });
+  $('btnCopy').onclick=async()=>{ const t=await getSrc(current); try{ await navigator.clipboard.writeText(t); toast('LaTeX source copied'); }catch(e){ viewMode='src'; renderViewer(); toast('Copy blocked: select the source text instead'); } };
+  // library
+  const lib3=[], libN=[]; for(const k of DOC_ORDER){ (k.startsWith('n3')?lib3:libN).push(docCard(k,false)); }
+  $('lib3').innerHTML=lib3.join(''); $('libN').innerHTML=libN.join('');
+  document.querySelectorAll('#lib3 .doc,#libN .doc').forEach(el=>el.onclick=()=>openDoc(el.dataset.k));
+  document.querySelectorAll('nav.tabs a').forEach(a=>a.addEventListener('click',()=>showView(a.dataset.v)));
+  window.addEventListener('hashchange',()=>{ const v=location.hash.slice(1); if(['explore','derivation','library','about'].includes(v)) showView(v); });
+  buildX(); buildN(); selfChecks(); update();
+  const v=location.hash.slice(1); if(['explore','derivation','library','about'].includes(v)) showView(v);
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+</script>
+</body>
+</html>

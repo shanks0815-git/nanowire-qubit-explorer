@@ -1,0 +1,253 @@
+%% The $N$-Nanowire Qubit with Vortices: Symmetric Case, Likharev CPR
+%% Author: Shashank Satish. Typed from the handwritten notes. Compile with pdfLaTeX (Overleaf default).
+\documentclass[10pt]{article}
+\usepackage[letterpaper,margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!50!black,bookmarks=false]{hyperref}
+\numberwithin{equation}{section}
+\allowdisplaybreaks[1]
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\newtcolorbox{resbox}{enhanced,breakable,fontupper=\small,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{paritybox}[1]{enhanced,breakable,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,fonttitle=\bfseries,colbacktitle=white,coltitle=black,titlerule=0.4pt,title={Parity check #1},left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{notebox}[1]{enhanced,breakable,colback=gray!7,colframe=gray!60,boxrule=0.5pt,arc=2pt,fonttitle=\bfseries,title={#1},left=6pt,right=6pt}
+% device sketch: \device{list of x positions in [0,6]}{labels}
+\newcommand{\device}[2]{%
+\begin{tikzpicture}[thick,scale=0.9]
+ \fill[gray!35] (-0.5,3.0) rectangle (6.5,3.4); \draw (-0.5,3.0) rectangle (6.5,3.4);
+ \fill[gray!35] (-0.5,-0.4) rectangle (6.5,0); \draw (-0.5,-0.4) rectangle (6.5,0);
+ \foreach \xx/\lab in {#1}{\draw[line width=1.6pt] (\xx,0) -- (\xx,3.0); \node[below] at (\xx,-0.4) {\small$\lab$};}
+ #2
+\end{tikzpicture}}
+\author{Shashank Satish}
+\date{\today}
+\title{The $N$-Nanowire Qubit with Vortices: Symmetric Case, Likharev CPR}
+\begin{document}
+\maketitle
+We will derive the $N$-nanowire symmetric case with vortices, using the Likharev CPR.
+
+\section{Geometry of the device}
+\begin{figure}[H]\centering
+\device{0/x_1=-0.5,1.5/x_2,3/,4.5/x_{N-1},6/x_N=0.5}{\node at (0.75,1.5){$n_1$}; \node at (2.25,1.5){$n_2$}; \node at (3.75,1.5){$\cdots$}; \node at (5.25,1.5){$n_{N-1}$};}
+\caption{$N$ equally spaced wires; loop $k$ (between wire $k$ and wire $k+1$) holds $n_k$ vortices.}
+\end{figure}
+\begin{center}
+\begin{tabular}{@{}c c l@{}}
+\toprule
+$N$ (number of nanowires) & $d$ (distance) & positions\\
+\midrule
+2 & 1 & $-0.5,\ 0.5$\\
+3 & 0.5 & $-0.5,\ 0,\ 0.5$\\
+4 & $1/3$ & $-0.5,\ -1/6,\ 1/6,\ 0.5$\\
+5 & 0.25 & $-0.5,\ -0.25,\ 0,\ 0.25,\ 0.5$\\
+\bottomrule
+\end{tabular}
+\end{center}
+The $N$-nanowire spacing is $d=\frac{1}{N-1}$.
+
+\section{Meissner phase equation and characteristic phase}
+\[
+\Phi_i=\Phi_1+2\pi b\,\Delta x_{1,i}-2\pi n_{1,i},\qquad n_{1,i}=\sum_{k=1}^{i-1}n_k\ \ (\text{the vortices between wire 1 and wire } i).
+\]
+Characteristic phase: $\varphi=\frac{\Phi_1+\Phi_2+\dots+\Phi_N}{N}=\frac{\sum_{i=1}^{N}\Phi_i}{N}$, so
+\begin{align*}
+N\varphi&=\sum_{i=1}^{N}\Phi_i=\Phi_1+\sum_{i=2}^{N}\Phi_i\qquad\Longrightarrow\qquad \Phi_1=N\varphi-\sum_{i=2}^{N}\Phi_i\\
+\Phi_1&=N\varphi-\sum_{i=2}^{N}\bigl(\Phi_1+2\pi b\Delta x_{1,i}-2\pi n_{1,i}\bigr)=N\varphi-\sum_{i=2}^{N}\Phi_1-\sum_{i=2}^{N}2\pi b\Delta x_{1,i}+\sum_{i=2}^{N}2\pi n_{1,i}\\
+\Phi_1&=N\varphi-(N-1)\Phi_1-\pi bN+2\pi\sum_{k=1}^{N-1}(N-k)n_k
+\end{align*}
+Here $\sum_{i=2}^{N}\Delta x_{1,i}=\sum_{i=2}^{N}(i-1)d=\frac{1}{N-1}\cdot\frac{(N-1)N}{2}=\frac N2$, and swapping the double sum, $\sum_{i=2}^{N}\sum_{k=1}^{i-1}n_k=\sum_{k=1}^{N-1}(N-k)n_k$ (the vortex number $n_k$ is counted once for each of the $N-k$ wires to its right). So
+\[
+N\Phi_1=N\varphi-\pi bN+2\pi\sum_{k=1}^{N-1}(N-k)n_k
+\qquad\Longrightarrow\qquad
+\boxed{\Phi_1=\varphi-\pi b+\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)\,n_k}
+\]
+\begin{paritybox}{: $N=3$}
+$\sum_{k=1}^{2}(3-k)n_k=(3-1)n_{12}+(3-2)n_{23}=2n_{12}+n_{23}$, so $\Phi_1=\varphi-\pi b+\frac{2\pi}{3}(2n_{12}+n_{23})$, the 3-nanowire result. \checkmark
+\end{paritybox}
+Now we take the Meissner equation, $\Phi_i=\Phi_1+2\pi b(x_i-x_1)-2\pi\sum_{k=1}^{i-1}n_k$. We know $x_1=-0.5$:
+\[
+\Phi_i=\Phi_1+2\pi b(x_i+0.5)-2\pi\sum_{k=1}^{i-1}n_k=\Phi_1+2\pi bx_i+\pi b-2\pi\sum_{k=1}^{i-1}n_k .
+\]
+Plugging in $\Phi_1$:
+\[
+\Phi_i=\varphi-\pi b+\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k+2\pi bx_i+\pi b-2\pi\sum_{k=1}^{i-1}n_k
+\quad\Longrightarrow\quad
+\boxed{\Phi_i=\varphi+2\pi bx_i+\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k-2\pi\sum_{k=1}^{i-1}n_k}
+\]
+
+\section{The Likharev CPR for $N$ nanowires}
+\[
+\frac{I}{I_0}=\sum_{i=1}^{N}\Bigl[\Bigl(\frac{\Phi_i}{\varphi_0}\Bigr)-\Bigl(\frac{\Phi_i}{\varphi_0}\Bigr)^3\Bigr].
+\]
+We let $z_i=2\pi bx_i+\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k-2\pi\sum_{k=1}^{i-1}n_k$, so $\Phi_i=\varphi+z_i$ and
+\[
+\frac{I}{I_0}=\underbrace{\sum_{i=1}^{N}\Bigl(\frac{\varphi+z_i}{\varphi_0}\Bigr)}_{A.}-\underbrace{\sum_{i=1}^{N}\Bigl(\frac{\varphi+z_i}{\varphi_0}\Bigr)^3}_{B.}
+\]
+\textbf{A.)}
+\begin{align*}
+\frac{1}{\varphi_0}\Bigl(\sum_{i=1}^{N}\varphi+\sum_{i=1}^{N}z_i\Bigr)
+&=\frac{1}{\varphi_0}\Bigl(N\varphi+2\pi b\sum_{i=1}^{N}x_i+\sum_{i=1}^{N}\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k-\sum_{i=1}^{N}2\pi\sum_{k=1}^{i-1}n_k\Bigr)\\
+&=\frac{1}{\varphi_0}\Bigl(N\varphi+0+N\cdot\frac{2\pi}{N}\sum_{k=1}^{N-1}(N-k)n_k-2\pi\sum_{k=1}^{N-1}(N-k)n_k\Bigr)=\boxed{\frac{N\varphi}{\varphi_0}}
+\end{align*}
+\textbf{B.)}
+\[
+\sum_{i=1}^{N}\Bigl(\frac{\varphi+z_i}{\varphi_0}\Bigr)^3=\frac{1}{\varphi_0^3}\sum_{i=1}^{N}\bigl(\varphi^3+z_i^3+3\varphi z_i^2+3\varphi^2z_i\bigr)=\frac{1}{\varphi_0^3}\Bigl[N\varphi^3+3\varphi\sum_{i=1}^{N}z_i^2+\sum_{i=1}^{N}z_i^3\Bigr],
+\]
+because $\sum_i3\varphi^2z_i=0$ (the same sum as in A.). \textbf{Total CPR:}
+\[
+\frac{I}{I_0}=\frac{N\varphi}{\varphi_0}-\frac{1}{\varphi_0^3}\Bigl[N\varphi^3+3\varphi\sum_{i=1}^{N}z_i^2+\sum_{i=1}^{N}z_i^3\Bigr]
+=\frac{N\varphi_0^2\varphi-N\varphi^3-3\varphi\sum_iz_i^2-\sum_iz_i^3}{\varphi_0^3}
+\]
+\begin{resbox}
+\[
+A=\frac{N\varphi_0^2-3\sum_{i=1}^{N}z_i^2}{\varphi_0^3},\qquad D=\frac{N}{\varphi_0^3},\qquad R=\frac{\sum_{i=1}^{N}z_i^3}{\varphi_0^3}
+\]
+\end{resbox}
+We have to calculate $\sum z_i^2$ and $\sum z_i^3$. Write
+\[
+z_i=2\pi\Bigl(bx_i+\frac1N\sum_{k=1}^{N-1}(N-k)n_k-\sum_{j=1}^{i-1}n_j\Bigr)=2\pi(bx_i+T_i),\qquad
+T_i=\frac1N\sum_{k=1}^{N-1}(N-k)n_k-\sum_{j=1}^{i-1}n_j .
+\]
+
+\section{The squares: $\sum z_i^2$}
+\[
+z_i^2=4\pi^2\bigl(b^2x_i^2+2bx_iT_i+T_i^2\bigr),\qquad
+\sum_{i=1}^{N}z_i^2=4\pi^2\Bigl[\underbrace{b^2\sum_{i=1}^{N}x_i^2}_{1}+\underbrace{2b\sum_{i=1}^{N}x_iT_i}_{2}+\underbrace{\sum_{i=1}^{N}T_i^2}_{3}\Bigr]
+\]
+\textbf{Short detour: the positions.} The $N$ wires are evenly spaced from $x=-\frac12$ to $x=+\frac12$; the total length is 1, and $N$ wires have $N-1$ gaps (3 wires have 2 gaps, 4 wires have 3 gaps), so each gap is $d=\frac{1}{N-1}$. Wire 1 is at $x_1=-\frac12$, wire 2 is one gap further at $x_2=x_1+\frac{1}{N-1}$, wire 3 is two gaps further at $x_3=x_1+2\bigl(\frac{1}{N-1}\bigr)$; therefore wire $i$ is at
+\[
+x_i=-\frac12+\frac{i-1}{N-1}=\frac{-(N-1)+2(i-1)}{2(N-1)}=\frac{2i-N-1}{2(N-1)} .
+\]
+\textbf{1.)} $\sum_ix_i^2=\sum_i\frac{(2i-(N+1))^2}{4(N-1)^2}$ with $(2i-(N+1))^2=4i^2-4i(N+1)+N^2+2N+1$:
+\[
+\sum_{i=1}^{N}x_i^2=\frac{1}{4(N-1)^2}\Bigl(\underbrace{\sum4i^2}_{a}-\underbrace{\sum4iN}_{b}-\underbrace{\sum4i}_{c}+\underbrace{\sum N^2}_{d}+\underbrace{\sum2N}_{e}+\underbrace{\sum1}_{f}\Bigr)
+\]
+with f) $N$, e) $2N^2$, d) $N^3$, c) $4\cdot\frac{N(N+1)}{2}=2N(N+1)$, b) $2N^2(N+1)$, a) $4\cdot\frac{N(N+1)(2N+1)}{6}=\frac{2N(N+1)(2N+1)}{3}$:
+\begin{align*}
+\sum_{i=1}^{N}x_i^2&=\frac{1}{4(N-1)^2}\Bigl(\frac{2N(N+1)(2N+1)}{3}-2N^2(N+1)-2N(N+1)+N^3+2N^2+N\Bigr)\\
+&=\frac{1}{4(N-1)^2}\Bigl(\frac{4N^3+6N^2+2N}{3}-N^3-2N^2-N\Bigr)\\
+&=\frac{1}{4(N-1)^2}\Bigl(\frac13N^3-\frac13N\Bigr)=\frac{1}{4(N-1)^2}\cdot\frac N3(N^2-1)\\
+&=\frac{N(N+1)(N-1)}{12(N-1)(N-1)}=\frac{N(N+1)}{12(N-1)}
+\end{align*}
+so piece 1 is $b^2\sum_ix_i^2=b^2\frac{N(N+1)}{12(N-1)}$.
+
+\textbf{2.)}
+\begin{align*}
+2b\sum_{i=1}^{N}x_iT_i&=2b\sum_{i=1}^{N}x_i\Bigl(\frac1N\sum_{k=1}^{N-1}(N-k)n_k-\sum_{j=1}^{i-1}n_j\Bigr)
+=2b\Bigl[\frac1N\sum_{k=1}^{N-1}(N-k)n_k\cdot\underbrace{\sum_{i=1}^{N}x_i}_{0}-\sum_{i=1}^{N}x_i\sum_{j=1}^{i-1}n_j\Bigr]\\
+&=-2b\sum_{i=1}^{N}x_i\sum_{j=1}^{i-1}n_j=-2b\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i\qquad(\text{swapping the double sum; the positions cancel out, }\textstyle\sum_ix_i=0).
+\end{align*}
+Since $\sum_{i=1}^{N}x_i=0$, $\sum_{i=j+1}^{N}x_i=-\sum_{i=1}^{j}x_i$, and with $x_i=\frac{2i-N-1}{2(N-1)}$:
+\[
+\sum_{i=1}^{j}x_i=\frac{1}{2(N-1)}\Bigl[2\sum_{i=1}^{j}i-(N+1)\sum_{i=1}^{j}1\Bigr]=\frac{1}{2(N-1)}\bigl[j(j+1)-(N+1)j\bigr]=\frac{j(j-N)}{2(N-1)} .
+\]
+\[
+\boxed{2b\sum_{i=1}^{N}x_iT_i=-\frac{b}{N-1}\sum_{j=1}^{N-1}j(N-j)\,n_j}
+\]
+\textbf{3.)}
+\[
+\sum_{i=1}^{N}T_i^2=\sum_{i=1}^{N}\Bigl[\frac{1}{N^2}\Bigl(\sum_{k=1}^{N-1}(N-k)n_k\Bigr)^2-2\Bigl(\frac1N\sum_{k=1}^{N-1}(N-k)n_k\Bigr)\Bigl(\sum_{j=1}^{i-1}n_j\Bigr)+\Bigl(\sum_{j=1}^{i-1}n_j\Bigr)^2\Bigr]=a-b+c
+\]
+a.) No $i$ terms, so it is just added $N$ times: $\frac1N\bigl(\sum_k(N-k)n_k\bigr)^2$.\\
+b.) $\frac2N\sum_k(N-k)n_k\sum_{i=1}^{N}\sum_{j=1}^{i-1}n_j=\frac2N\sum_k(N-k)n_k\sum_j(N-j)n_j=\frac2N\bigl(\sum_k(N-k)n_k\bigr)^2$.\\
+c.) $\sum_{i=1}^{N}\bigl(\sum_{j=1}^{i-1}n_j\bigr)^2$. If we let $N=3$: $i=1$ gives 0, $i=2$ gives $n_1^2$, $i=3$ gives $(n_1+n_2)^2=n_1^2+2n_1n_2+n_2^2$; total $2n_1^2+2n_1n_2+n_2^2$. If we let $N=4$: $i=1$: 0; $i=2$: $n_1^2$; $i=3$: $(n_1+n_2)^2$; $i=4$: $(n_1+n_2+n_3)^2$; total $3n_1^2+2n_2^2+n_3^2+4n_1n_2+2n_1n_3+2n_2n_3$. So $n_j^2$ comes with $(N-j)$, and $n_1n_2$ with $4=2(4-2)$, $n_1n_3$ with $2=2(4-3)$: the pair $n_jn_k$ comes with $N-\max(j,k)$ (counted for $j,k$ and $k,j$):
+\[
+c=\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\bigl(N-\max(j,k)\bigr)n_jn_k .
+\]
+Adding all three terms:
+\begin{align*}
+\sum_iT_i^2&=\frac1N\Bigl(\sum_k(N-k)n_k\Bigr)^2-\frac2N\Bigl(\sum_k(N-k)n_k\Bigr)^2+\sum_{j,k}\bigl(N-\max(j,k)\bigr)n_jn_k\\
+&=-\frac1N\Bigl(\sum_{k=1}^{N-1}(N-k)n_k\Bigr)^2+\sum_{j,k}\bigl(N-\max(j,k)\bigr)n_jn_k .
+\end{align*}
+Writing the square as a double sum, $\bigl(\sum_k(N-k)n_k\bigr)^2=\sum_j\sum_k(N-j)(N-k)n_jn_k$:
+\[
+\sum_iT_i^2=\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\Bigl[\bigl(N-\max(j,k)\bigr)-\frac1N(N-j)(N-k)\Bigr]n_jn_k .
+\]
+With $(N-j)(N-k)=(N-\max)(N-\min)$, the bracket is
+$(N-\max)\bigl[1-\frac{N-\min}{N}\bigr]=(N-\max)\bigl[\frac NN-\frac{N-\min}{N}\bigr]=\frac{\min(j,k)\,\bigl(N-\max(j,k)\bigr)}{N}$:
+\[
+\boxed{\sum_{i=1}^{N}T_i^2=\frac1N\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\min(j,k)\bigl(N-\max(j,k)\bigr)n_jn_k}
+\]
+\textbf{Putting the three pieces into $\sum z_i^2$:}
+\[
+\sum_{i=1}^{N}z_i^2=4\pi^2\Bigl[\frac{b^2N(N+1)}{12(N-1)}-\frac{b}{N-1}\sum_{j=1}^{N-1}j(N-j)n_j+\frac1N\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\min(j,k)\bigl(N-\max(j,k)\bigr)n_jn_k\Bigr]
+\]
+We know $A=\frac{N\varphi_0^2-3\sum_iz_i^2}{\varphi_0^3}$, and $-3\cdot4\pi^2=-12\pi^2$ times each piece gives
+$-\frac{\pi^2N(N+1)b^2}{N-1}$, $+\frac{12\pi^2b}{N-1}\sum_jj(N-j)n_j$ and $-\frac{12\pi^2}{N}\sum_{j,k}\min(j,k)(N-\max(j,k))n_jn_k$:
+\begin{resbox}
+\[
+A=\frac{1}{\varphi_0^3}\Bigl[N\varphi_0^2-\frac{\pi^2N(N+1)}{N-1}b^2+\frac{12\pi^2b}{N-1}\sum_{j=1}^{N-1}j(N-j)n_j-\frac{12\pi^2}{N}\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\min(j,k)\bigl(N-\max(j,k)\bigr)n_jn_k\Bigr]
+\]
+\end{resbox}
+
+\section{The cubes: $\sum z_i^3$}
+\[
+R=\frac{1}{\varphi_0^3}\sum_iz_i^3=\frac{1}{\varphi_0^3}\sum_i8\pi^3\bigl[bx_i+T_i\bigr]^3=\frac{8\pi^3}{\varphi_0^3}\sum_i\bigl(b^3x_i^3+3b^2x_i^2T_i+3bx_iT_i^2+T_i^3\bigr).
+\]
+The $\sum x_i$ and $\sum x_i^3$ terms all disappear due to the symmetry, so $8\pi^3\sum_ib^3x_i^3=0$.
+
+\textbf{The $b^2$ term.}
+\begin{align*}
+8\pi^3\sum_i3b^2x_i^2T_i&=3b^28\pi^3\Bigl[\sum_ix_i^2\cdot\frac1N\sum_k(N-k)n_k-\sum_ix_i^2\sum_{j=1}^{i-1}n_j\Bigr]
+=3b^28\pi^3\Bigl[\frac{N+1}{12(N-1)}\sum_k(N-k)n_k-\sum_{j=1}^{N-1}n_j\sum_{i=j+1}^{N}x_i^2\Bigr],
+\end{align*}
+with $\sum_{i=j+1}^{N}x_i^2=\sum_{i=1}^{N}x_i^2-\sum_{i=1}^{j}x_i^2=\frac{N(N+1)}{12(N-1)}-H_j$. The head sum $H_j=\sum_{i=1}^{j}x_i^2=\frac{1}{4(N-1)^2}\bigl[4\sum_{i=1}^{j}i^2-4(N+1)\sum_{i=1}^{j}i+(N+1)^2\sum_{i=1}^{j}1\bigr]$, using the tools with upper limit $j$ ($\sum i^2=\frac{j(j+1)(2j+1)}{6}$, $\sum i=\frac{j(j+1)}{2}$, $\sum1=j$):
+\begin{align*}
+4\cdot\tfrac{j(j+1)(2j+1)}{6}-4(N+1)\tfrac{j(j+1)}{2}+(N+1)^2j&=\tfrac23j(2j^2+3j+1)-2(N+1)(j^2+j)+(N^2+2N+1)j\\
+&=\tfrac43j^3+2j^2+\tfrac23j-2Nj^2-2Nj-2j^2-2j+N^2j+2Nj+j\\
+&=\tfrac43j^3-2Nj^2+\bigl(N^2-\tfrac13\bigr)j\\
+&=\tfrac j3\bigl(4j^2-6Nj+3N^2-1\bigr)
+\qquad\Longrightarrow\qquad H_j=\frac{j(3N^2-6Nj+4j^2-1)}{12(N-1)^2}.
+\end{align*}
+Then
+\[
+\frac{N+1}{12(N-1)}\sum_j(N-j)n_j-\frac{N(N+1)}{12(N-1)}\sum_jn_j+\sum_jn_jH_j
+=\sum_jn_j\Bigl[-\frac{(N+1)j}{12(N-1)}+\frac{j(3N^2-6Nj+4j^2-1)}{12(N-1)^2}\Bigr],
+\]
+and $-\frac{(N+1)j}{12(N-1)}=-\frac{j(N^2-1)}{12(N-1)^2}$, so the bracket is $\frac{j[-(N^2-1)+3N^2-6Nj+4j^2-1]}{12(N-1)^2}$ with
+$-N^2+1+3N^2-6Nj+4j^2-1=2N^2-6Nj+4j^2=2(N-j)(N-2j)$:
+\[
+\sum_ix_i^2T_i=\sum_{j=1}^{N-1}\frac{j(N-j)(N-2j)}{6(N-1)^2}n_j .
+\]
+\textbf{The $b$ term.} With $m_i=\sum_{j=1}^{i-1}n_j$, $T_i=\frac1N\sum_k(N-k)n_k-m_i$ and $\sum_ix_i=0$:
+\[
+\sum_ix_iT_i^2=\sum_ix_im_i^2-\frac2N\Bigl(\sum_k(N-k)n_k\Bigr)\sum_ix_im_i .
+\]
+Here $m_i^2=\bigl(\sum_{j=1}^{i-1}n_j\bigr)\bigl(\sum_{k=1}^{i-1}n_k\bigr)=\sum_{j=1}^{i-1}\sum_{k=1}^{i-1}n_jn_k$, and the pair $n_jn_k$ is present for the wires $i>\max(j,k)$, whose positions add up to $\sum_{i>\max}x_i=\frac{\max(j,k)(N-\max(j,k))}{2(N-1)}$ (from the head sum above). So
+\[
+\sum_{i=1}^{N}x_im_i^2=\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\frac{\max(j,k)\bigl(N-\max(j,k)\bigr)}{2(N-1)}n_jn_k,\qquad
+\sum_ix_im_i=\sum_j\frac{j(N-j)}{2(N-1)}n_j .
+\]
+\textbf{The $b^0$ term.} With $S=\sum_k(N-k)n_k$ and $\sum_im_i=S$:
+\begin{align*}
+\sum_iT_i^3&=\sum_i\Bigl(\frac SN-m_i\Bigr)^3=\frac{S^3}{N^2}-\frac{3S^2}{N^2}S+\frac{3S}{N}\sum_im_i^2-\sum_im_i^3\\
+&=-\frac{2}{N^2}S^3+\frac{3S}{N}\sum_{j,k}\bigl(N-\max(j,k)\bigr)n_jn_k-\sum_{j,k,l}\bigl(N-\max(j,k,l)\bigr)n_jn_kn_l ,
+\end{align*}
+where the triple $n_jn_kn_l$ is present for the $N-\max(j,k,l)$ wires to the right of all three loops.
+
+\section{Final result}
+\begin{resbox}
+\[
+A=\frac{1}{\varphi_0^3}\Bigl[N\varphi_0^2-\frac{\pi^2N(N+1)}{N-1}b^2+\frac{12\pi^2b}{N-1}\sum_{j=1}^{N-1}j(N-j)n_j-\frac{12\pi^2}{N}\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\min(j,k)\bigl(N-\max(j,k)\bigr)n_jn_k\Bigr],\qquad D=\frac{N}{\varphi_0^3}
+\]
+\begin{align*}
+R=\frac{8\pi^3}{\varphi_0^3}\Biggl[&\frac{b^2}{2(N-1)^2}\sum_{j=1}^{N-1}j(N-j)(N-2j)n_j+\frac{3b}{2(N-1)}\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\max(j,k)\bigl(N-\max(j,k)\bigr)n_jn_k\\
+&-\frac{3b}{N(N-1)}\Bigl[\sum_{k=1}^{N-1}(N-k)n_k\Bigr]\Bigl[\sum_{j=1}^{N-1}j(N-j)n_j\Bigr]
+-\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\sum_{l=1}^{N-1}\bigl(N-\max(j,k,l)\bigr)n_jn_kn_l\\
+&+\frac3N\Bigl[\sum_{k=1}^{N-1}(N-k)n_k\Bigr]\Bigl[\sum_{j=1}^{N-1}\sum_{k=1}^{N-1}\bigl(N-\max(j,k)\bigr)n_jn_k\Bigr]-\frac{2}{N^2}\Bigl[\sum_{k=1}^{N-1}(N-k)n_k\Bigr]^3\Biggr]
+\end{align*}
+\[
+\frac{I}{I_0}=A\varphi-D\varphi^3-R,\qquad
+\hat H=-4E_C\,\frac{\partial^2}{\partial\varphi^2}+\frac{\hbar I_0}{2e}\Bigl[\frac12A\varphi^2-\frac14D\varphi^4-R\varphi\Bigr]
+\]
+\end{resbox}
+\begin{notebox}{Checks}
+In the final highlighted $A$ of the notes the first term reads $N\varphi_0^3$; inside the bracket it is $N\varphi_0^2$ (from $A=\frac{N\varphi_0^2-3\sum z_i^2}{\varphi_0^3}$). With that, the formulas were compared with the direct wire-by-wire sum for $N=2,\dots,8$ and random vortex numbers (agreement to $10^{-14}$). $N=2$ gives $R=0$ and $A=\frac{2\varphi_0^2-6\pi^2(b-n)^2}{\varphi_0^3}$ (the Dayem paper with $b\to b-n$); $N=3$ gives the 3-nanowire symmetric vortex result; no vortices gives $R=0$ and the symmetric $N$-wire $A$; mirror-symmetric patterns $n_j=n_{N-j}$ give $R=0$.
+\end{notebox}
+
+\end{document}

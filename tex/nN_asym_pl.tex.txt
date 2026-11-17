@@ -1,0 +1,133 @@
+%% The $N$-Nanowire Hamiltonian with the Realistic $2m{+}1$ CPR (Asymmetric Positions)
+%% Author: Shashank Satish. Typed from the handwritten notes. Compile with pdfLaTeX (Overleaf default).
+\documentclass[10pt]{article}
+\usepackage[letterpaper,margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!50!black,bookmarks=false]{hyperref}
+\numberwithin{equation}{section}
+\allowdisplaybreaks[1]
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\newtcolorbox{resbox}{enhanced,breakable,fontupper=\small,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{paritybox}[1]{enhanced,breakable,colback=white,colframe=black,boxrule=0.7pt,arc=0pt,fonttitle=\bfseries,colbacktitle=white,coltitle=black,titlerule=0.4pt,title={Parity check #1},left=5pt,right=5pt,top=2pt,bottom=2pt}
+\newtcolorbox{notebox}[1]{enhanced,breakable,colback=gray!7,colframe=gray!60,boxrule=0.5pt,arc=2pt,fonttitle=\bfseries,title={#1},left=6pt,right=6pt}
+% device sketch: \device{list of x positions in [0,6]}{labels}
+\newcommand{\device}[2]{%
+\begin{tikzpicture}[thick,scale=0.9]
+ \fill[gray!35] (-0.5,3.0) rectangle (6.5,3.4); \draw (-0.5,3.0) rectangle (6.5,3.4);
+ \fill[gray!35] (-0.5,-0.4) rectangle (6.5,0); \draw (-0.5,-0.4) rectangle (6.5,0);
+ \foreach \xx/\lab in {#1}{\draw[line width=1.6pt] (\xx,0) -- (\xx,3.0); \node[below] at (\xx,-0.4) {\small$\lab$};}
+ #2
+\end{tikzpicture}}
+\author{Shashank Satish}
+\date{\today}
+\title{The $N$-Nanowire Hamiltonian with the Realistic $2m{+}1$ CPR (Asymmetric Positions)}
+\begin{document}
+\maketitle
+We will look at the asymmetrical case for the $N$-nanowire device and derive the Hamiltonian using the $2m+1$ CPR.
+
+\section{Geometry of the device}
+\begin{figure}[H]\centering
+\device{0/x_1=-0.5,1.1/x_2,2.0/x_3,4.4/x_{N-1},6/x_N=0.5}{\node at (3.2,1.5){$\cdots$};}
+\caption{$N$ wires at arbitrary (asymmetric) positions between $x_1=-0.5$ and $x_N=0.5$.}
+\end{figure}
+We do not know the spacings: $\Delta x_{i,i+1}=x_{i+1}-x_i$.
+
+\textbf{Meissner phase equation.}
+\begin{align*}
+\Phi_i&=\Phi_1+2\pi b\sum_{k=1}^{i-1}\Delta x_{k,k+1}=\Phi_1+2\pi b(x_i-x_1)=\Phi_1+2\pi bx_i-2\pi bx_1=\Phi_1+2\pi bx_i-2\pi b(-0.5)\\
+&=\Phi_1+2\pi bx_i+\pi b=\Phi_1+\pi b(2x_i+1)=\Phi_1+2\pi b(x_i+0.5)
+\end{align*}
+
+\section{Characteristic equation}
+\[
+\varphi=\frac{\Phi_1+\dots+\Phi_N}{N}=\frac{\sum_{i=1}^{N}\Phi_i}{N}=\frac{\Phi_1+\sum_{i=2}^{N}\Phi_i}{N},\qquad N\varphi=\Phi_1+\sum_{i=2}^{N}\Phi_i .
+\]
+Plugging in $\Phi_i=\Phi_1+2\pi b(x_i+0.5)$:
+\begin{align*}
+N\varphi&=\Phi_1+\sum_{i=2}^{N}\bigl(\Phi_1+2\pi b(x_i+0.5)\bigr)=\Phi_1+\sum_{i=2}^{N}\Phi_1+\sum_{i=2}^{N}2\pi bx_i+\sum_{i=2}^{N}\pi b\\
+&=\Phi_1+(N-1)\Phi_1+2\pi b\Bigl[\sum_{i=1}^{N}x_i-x_1\Bigr]+(N-1)\pi b=\Phi_1+(N-1)\Phi_1+2\pi b\Bigl(\sum_{i=1}^{N}x_i+0.5\Bigr)+(N-1)\pi b\\
+&=\Phi_1+N\Phi_1-\Phi_1+2\pi b\sum_{i=1}^{N}x_i+\pi b+N\pi b-\pi b=N\Phi_1+N\pi b+2\pi b\sum_{i=1}^{N}x_i
+\end{align*}
+\[
+\varphi=\Phi_1+\pi b+\frac{2\pi b}{N}\sum_{i=1}^{N}x_i
+\quad\Longrightarrow\quad
+\Phi_1=\varphi-\pi b-2\pi b\underbrace{\frac1N\sum_{i=1}^{N}x_i}_{\bar x}
+\quad\Longrightarrow\quad
+\boxed{\Phi_1=\varphi-\pi b-2\pi b\bar x}
+\]
+with $\bar x=\frac1N\sum_{i=1}^{N}x_i$ the average position of all the wires. Now we get $\Phi_i$ in terms of $\varphi$:
+\[
+\Phi_i=\varphi-\pi b-2\pi b\bar x+2\pi b(x_i+0.5)=\varphi-\pi b-2\pi b\bar x+2\pi bx_i+\pi b
+\quad\Longrightarrow\quad
+\boxed{\Phi_i=\varphi+2\pi b(x_i-\bar x)}
+\]
+
+\section{Plugging it into the 2m+1 CPR}
+\[
+\frac{I(\Phi)}{I_0}=\frac{\Phi}{\varphi_0}-a\Bigl(\frac{\Phi}{\varphi_0}\Bigr)^{2m+1},\qquad
+\sum_{i=1}^{N}\frac{I(\Phi_i)}{I_0}=\sum_{i=1}^{N}\Biggl[\underbrace{\frac{\varphi+2\pi b(x_i-\bar x)}{\varphi_0}}_{1}\ \underbrace{-\ a\Bigl(\frac{\varphi+2\pi b(x_i-\bar x)}{\varphi_0}\Bigr)^{2m+1}}_{2}\Biggr]
+\]
+\textbf{1.)}
+\begin{align*}
+\sum_{i=1}^{N}\frac{\varphi}{\varphi_0}+\sum_{i=1}^{N}\frac{2\pi bx_i}{\varphi_0}-\sum_{i=1}^{N}\frac{2\pi b\bar x}{\varphi_0}
+&=N\frac{\varphi}{\varphi_0}+\frac{2\pi b}{\varphi_0}\sum_{i=1}^{N}x_i-N\cdot\frac{2\pi b\bar x}{\varphi_0}
+=N\frac{\varphi}{\varphi_0}+\frac{2\pi b}{\varphi_0}\sum_{i=1}^{N}x_i-N\cdot\frac{2\pi b\frac1N\sum_ix_i}{\varphi_0}
+=\boxed{N\frac{\varphi}{\varphi_0}}
+\end{align*}
+\textbf{2.)} Let us work on expanding the term inside the summation. Let $x=\varphi$, $y=2\pi b(x_i-\bar x)$ and $n=2m+1$ in the binomial theorem:
+\[
+(x+y)^n=\sum_{k=0}^{n}\binom nk x^{n-k}y^k=\sum_{k=0}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}\bigl(2\pi b(x_i-\bar x)\bigr)^k .
+\]
+So
+\begin{align*}
+\sum_{i=1}^{N}-a\Bigl(\frac{\varphi+2\pi b(x_i-\bar x)}{\varphi_0}\Bigr)^{2m+1}
+&=\sum_{i=1}^{N}-a\,\frac{\sum_{k=0}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}(2\pi b)^k(x_i-\bar x)^k}{\varphi_0^{2m+1}}\\
+&=-\frac{a}{\varphi_0^{2m+1}}\sum_{i=1}^{N}\sum_{k=0}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}(2\pi b)^k(x_i-\bar x)^k\\
+&=-\frac{a}{\varphi_0^{2m+1}}\sum_{k=0}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}(2\pi b)^k\sum_{i=1}^{N}(x_i-\bar x)^k .
+\end{align*}
+If we let $k=0$ and $k=1$:
+\[
+\sum_{i=1}^{N}(x_i-\bar x)^0=(1)(N)=N,\qquad \sum_{i=1}^{N}(x_i-\bar x)^1=\sum_{i=1}^{N}x_i-N\bar x=0 .
+\]
+\begin{resbox}
+\[
+\sum_{i=1}^{N}\frac{I(\Phi_i)}{I_0}=\frac{N\varphi}{\varphi_0}-\frac{a}{\varphi_0^{2m+1}}\Bigl[N\varphi^{2m+1}+\sum_{k=2}^{2m+1}\binom{2m+1}{k}\varphi^{2m+1-k}(2\pi b)^k\sum_{i=1}^{N}(x_i-\bar x)^k\Bigr]
+\]
+\end{resbox}
+\begin{paritybox}{: $m=1$, $a=1$}
+For $m=1$, $a=1$ the sum has $k=2$ and $k=3$: $\binom32\varphi(2\pi b)^2\sum_i(x_i-\bar x)^2+\binom33(2\pi b)^3\sum_i(x_i-\bar x)^3=12\pi^2b^2\varphi\bigl(\sum_ix_i^2-N\bar x^2\bigr)+8\pi^3b^3\bigl(\sum_ix_i^3-3\bar x\sum_ix_i^2+2N\bar x^3\bigr)$, which is exactly the asymmetric $N$-nanowire Likharev result. \checkmark
+\end{paritybox}
+
+\section{Finding the potential function}
+With $V=\frac{\hbar}{2e}\frac{d\varphi}{dt}$ and $P=IV$:
+\[
+U(\varphi)=\int P\,dt=\int IV\,dt=\int I\Bigl(\frac{\hbar}{2e}\frac{d\varphi}{dt}\Bigr)dt=\frac{\hbar I_0}{2e}\int_0^\varphi\Bigl(\sum_{i=1}^{N}\frac{I(\Phi_i)}{I_0}\Bigr)d\varphi'
+\]
+\[
+U(\varphi)=\frac{\hbar I_0}{2e}\int_0^\varphi\Bigl\{\frac{N\varphi'}{\varphi_0}-\frac{a}{\varphi_0^{2m+1}}\Bigl[N\varphi'^{2m+1}+\sum_{k=2}^{2m+1}\binom{2m+1}{k}\varphi'^{2m+1-k}(2\pi b)^k\sum_{i=1}^{N}(x_i-\bar x)^k\Bigr]\Bigr\}d\varphi'
+\]
+The three integrals:
+\[
+\int_0^\varphi\frac{N\varphi'}{\varphi_0}d\varphi'=\frac{N}{\varphi_0}\cdot\frac{\varphi^2}{2}=\frac{N\varphi^2}{2\varphi_0},\qquad
+\int_0^\varphi N\varphi'^{2m+1}d\varphi'=N\frac{\varphi^{2m+2}}{2m+2},\qquad
+\int_0^\varphi\varphi'^{2m+1-k}d\varphi'=\frac{\varphi^{2m+2-k}}{2m+2-k}.
+\]
+\[
+U(\varphi)=\frac{\hbar I_0}{2e}\Bigl[\frac{N\varphi^2}{2\varphi_0}-\frac{a}{\varphi_0^{2m+1}}\Bigl(\frac{N\varphi^{2m+2}}{2m+2}+\sum_{k=2}^{2m+1}\binom{2m+1}{k}\frac{(2\pi b)^k\varphi^{2m+2-k}}{2m+2-k}\sum_{i=1}^{N}(x_i-\bar x)^k\Bigr)\Bigr]
+\]
+\begin{resbox}
+\[
+\hat H=-4E_C\,\partial_\varphi^2+\frac{\hbar I_0}{2e}\Bigl[\frac{N\varphi^2}{2\varphi_0}-\frac{a}{\varphi_0^{2m+1}}\Bigl(\frac{N\varphi^{2m+2}}{2m+2}+\sum_{k=2}^{2m+1}\binom{2m+1}{k}\frac{(2\pi b)^k\varphi^{2m+2-k}}{2m+2-k}\sum_{i=1}^{N}(x_i-\bar x)^k\Bigr)\Bigr]
+\]
+\end{resbox}
+\begin{notebox}{Note}
+In the last two lines of the notes the first term reads $\frac{N\varphi^2}{2e}$; it is $\frac{N\varphi^2}{2\varphi_0}$, from the integral above. For a symmetric layout every odd moment $\sum_i(x_i-\bar x)^k$ vanishes, so only even $k$ survive and there is no tilt term.
+\end{notebox}
+
+\end{document}
